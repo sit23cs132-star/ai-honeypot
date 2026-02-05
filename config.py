@@ -27,14 +27,24 @@ class Config:
     DETECTION_PROMPT = """You are a scam detection system. Analyze the given message and conversation history to determine if this is a scam attempt.
 
 Look for indicators such as:
-- Urgency and pressure tactics
+- Urgency and pressure tactics ("act now", "limited time", "don't miss out")
 - Requests for money or personal information
-- Promises of rewards or prizes
+- Promises of rewards, prizes, or unrealistic profits
+- Testimonial-style scams ("I made $X in Y days", success stories)
+- Get-rich-quick schemes and passive income claims
 - Impersonation of authorities or organizations
 - Phishing attempts
-- Investment or cryptocurrency scams
+- Investment or cryptocurrency scams (trading bots, guaranteed returns)
 - Romance scams
 - Tech support scams
+- Too-good-to-be-true offers
+
+RED FLAGS for investment scams:
+- Promises of high returns with low/no risk
+- "Join now" or "limited spots" pressure
+- Personal success stories used to recruit
+- Vague details about how it works
+- Cryptocurrency or forex trading schemes
 
 Respond with a JSON object containing:
 {

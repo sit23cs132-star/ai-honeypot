@@ -14,18 +14,19 @@ class ScamDetector:
         
         # Common scam keywords and patterns
         self.scam_keywords = [
-            r'\b(urgent|immediately|act now|limited time|expire|hurry)\b',
-            r'\b(won|winner|prize|lottery|reward|gift|claim)\b',
+            r'\b(urgent|immediately|act now|limited time|expire|hurry|don\'?t miss|hurry up)\b',
+            r'\b(won|winner|prize|lottery|reward|gift|claim|congratulations)\b',
             r'\b(bank|account|credit card|debit card|cvv|pin|password|otp)\b',
             r'\b(verify|confirm|update|suspend|locked|blocked|compromised)\b',
             r'\b(refund|tax|customs|clearance|fee|payment|transfer)\b',
             r'\b(click here|link|website|download|install|app)\b',
-            r'\b(investment|profit|returns|earn|income|opportunity)\b',
-            r'\b(cryptocurrency|bitcoin|trading|forex|stocks)\b',
+            r'\b(investment|profit|returns|earn|income|opportunity|passive income)\b',
+            r'\b(cryptocurrency|bitcoin|crypto|trading|forex|stocks|bot)\b',
             r'\b(loan|debt|credit score|financial help)\b',
             r'\b(romance scam|dating scam|love scam|lonely|soulmate)\b',
             r'\b(government|irs|tax authority|police|legal action)\b',
             r'\b(tech support|virus|infected|hacked|security)\b',
+            r'\b(made \$\d+|earned \$\d+|join now|limited spots|guaranteed|risk[- ]?free)\b',
         ]
         
         # URL patterns
@@ -115,10 +116,24 @@ class ScamDetector:
             indicators.append("urgency_tactic")
         
         # Check for money-related terms
-        money_words = ['money', 'payment', 'transfer', 'send', 'pay', 'bank', 'account', 'upi', 'paytm', 'prize', 'won', 'claim']
+        money_words = ['money', 'payment', 'transfer', 'send', 'pay', 'bank', 'account', 'upi', 'paytm', 'prize', 'won', 'claim', '$', '₹', 'paid', 'profit', 'returns']
         if any(word in message_lower for word in money_words):
             score += 0.25
             indicators.append("money_request")
+        
+        # Check for testimonial/success story patterns
+        testimonial_patterns = [
+            r'i made \$?\d+',
+            r'i earned \$?\d+', 
+            r'\d+ in \d+ (days?|weeks?|months?)',
+            r'join (now|today|us)',
+            r'limited (spots?|members?|time)',
+        ]
+        for pattern in testimonial_patterns:
+            if re.search(pattern, message_lower):
+                score += 0.2
+                indicators.append("testimonial_scam_pattern")
+                break
         
         # Cap score at 1.0
         score = min(score, 1.0)

@@ -16,8 +16,8 @@ class IntelligenceExtractor:
             # UPI ID: username@bank (e.g., john@paytm, user@oksbi)
             "upi_id": re.compile(r'\b[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\b'),
             
-            # Phone numbers: various formats
-            "phone": re.compile(r'(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}|\b\d{10,15}\b'),
+            # Phone numbers: various formats (including alphanumeric like 800-FAKE)
+            "phone": re.compile(r'(\+?\d{1,3}[-\.\s]?)?\(?\d{3}\)?[-\.\s]?[\d]{3,4}[-\.\s]?[\d]{4}|\+?\d{1,3}[-\.\s]?\d{3}[-\.\s]?\d{3}[-\.\s]?[A-Z]{4}|\b\d{10,15}\b'),
             
             # Email addresses
             "email": re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'),
@@ -95,9 +95,10 @@ class IntelligenceExtractor:
         for match in matches:
             # Filter out common false positives
             if len(match) >= 9 and len(match) <= 18:
-                # Avoid phone numbers (typically 10-15 digits)
-                # Bank accounts are usually 10-18 digits
-                if not self._is_phone_number(match):
+                # Bank accounts are usually 12-18 digits
+                # 10-11 digits are more likely phone numbers
+                # 12+ digits are more likely bank accounts
+                if len(match) >= 12 or not self._is_likely_phone(match):
                     accounts.add(match)
         
         return accounts
@@ -125,19 +126,19 @@ class IntelligenceExtractor:
         """Extract phone numbers from text."""
         phone_numbers = set()
         
-        matches = self.patterns["phone"].findall(text)
+        # More comprehensive phone pattern including alphanumeric
+        phone_patterns = [
+            r'\+?\d{1,3}[-\.\s]?\d{3}[-\.\s]?\d{3}[-\.\s]?\d{4}',  # +1-800-555-1234
+            r'\+?\d{1,3}[-\.\s]?\d{3}[-\.\s]?\d{3}[-\.\s]?[A-Z]{4}',  # +1-800-555-FAKE
+            r'\+?\d{1,3}[-\.\s]?\(\d{3}\)[-\.\s]?\d{3}[-\.\s]?\d{4}',  # +1-(800)-555-1234
+            r'\b\d{10}\b(?!\d)',  # 10 digits standalone (not part of longer number)
+        ]
         
-        for match in matches:
-            # Clean up the phone number
-            if isinstance(match, tuple):
-                match = ''.join(match)
-            
-            # Remove formatting characters
-            cleaned = re.sub(r'[-.\s()]', '', match)
-            
-            # Validate length (10-15 digits)
-            if 10 <= len(cleaned) <= 15:
-                phone_numbers.add(cleaned)
+        for pattern in phone_patterns:
+            matches = re.findall(pattern, text)
+            for match in matches:
+                # Keep original format for alphanumeric
+                phone_numbers.add(match)
         
         return phone_numbers
     
@@ -180,21 +181,15 @@ class IntelligenceExtractor:
         url_lower = url.lower()
         return any(keyword in url_lower for keyword in self.suspicious_url_keywords)
     
-    def _is_phone_number(self, number_str: str) -> bool:
-        """Check if a number string is likely a phone number."""
-        # Phone numbers are typically 10-15 digits
-        # Bank accounts are typically 10-18 digits
-        # This is a heuristic to differentiate
-        
+    def _is_likely_phone(self, number_str: str) -> bool:
+        """Check if a number string is likely a phone number (conservative check)."""
         length = len(number_str)
         
-        # If it's exactly 10 digits, it's likely a phone number
-        if length == 10:
-            return True
+        # If it's exactly 10 or 11 digits, could be phone
+        if length in [10, 11]:
+            # Check if it starts with common phone prefixes
+            if number_str.startswith(('91', '1', '44', '86', '7', '8', '9')):
+                return True
         
-        # If it starts with common country codes
-        if number_str.startswith(('91', '1', '44', '86')):
-            return True
-        
-        # Otherwise, assume it's a bank account
+        # 12+ digits are more likely bank accounts
         return False
