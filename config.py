@@ -15,7 +15,7 @@ class Config:
     # AI Provider Configuration
     AI_PROVIDER = os.getenv("AI_PROVIDER", "openai")  # openai or anthropic
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # More accessible and faster
+    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")  # Valid GPT-4 Turbo model (no -preview)
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
     ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
     
