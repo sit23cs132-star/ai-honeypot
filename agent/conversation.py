@@ -200,16 +200,71 @@ Generate a natural response that maintains your persona and follows the current 
             return response.strip()
         except Exception as e:
             print(f"⚠️  Neutral response AI failed: {str(e)[:100]}")
-            # Vary the fallback based on hash of message
-            seed = hash(message) % 5
-            fallbacks = [
-                "I'm here! What's going on? Can you explain?",
-                "Yes, I saw your message. What do you need from me?",  
-                "I'm available now. Tell me what this is about?",
-                "Hello! I'm paying attention. What happened?",
-                "I'm listening. Can you give me more details?"
+            # Use contextual fallback instead of generic responses
+            # This ensures engagement even when AI fails
+            from random import Random
+            rng = Random(hash(message))
+            
+            # Context-aware responses based on message content
+            message_lower = message.lower()
+            
+            if 'otp' in message_lower or 'code' in message_lower:
+                responses = [
+                    "Oh! I got an OTP just now. Is that what you mean?",
+                    "Wait, I received a code. Should I share it with you?",
+                    "I see a code here. Which digits do you need?"
+                ]
+                return rng.choice(responses)
+            
+            if 'account' in message_lower and 'transfer' in message_lower:
+                responses = [
+                    "A transfer? I didn't make any transfer! What should I do?",
+                    "Oh no! How do I stop this transfer? Tell me quickly!",
+                    "Transfer of how much? I need to stop it now!"
+                ]
+                return rng.choice(responses)
+            
+            if 'account' in message_lower or 'bank' in message_lower:
+                responses = [
+                    "Oh no! Which bank account? What happened?",
+                    "My account? Which one - I have multiple banks!",
+                    "Wait, what's wrong with my account? Tell me more!"
+                ]
+                return rng.choice(responses)
+            
+            if 'upi' in message_lower or 'pin' in message_lower:
+                responses = [
+                    "UPI PIN? Why do you need that? Is this safe?",
+                    "My UPI... wait, which app are you talking about?",
+                    "I use PhonePe. What UPI details do you need?"
+                ]
+                return rng.choice(responses)
+            
+            if 'email' in message_lower or '@' in message_lower:
+                responses = [
+                    "Email to where? What address should I use?",
+                    "Should I email you? What's your email address?",
+                    "I can send email. Where do I send it?"
+                ]
+                return rng.choice(responses)
+            
+            if any(word in message_lower for word in ['urgent', 'immediately', 'minutes', 'hurry']):
+                responses = [
+                    "Oh my god, this is urgent! What do I do first?",
+                    "I'm worried now! Tell me the steps quickly!",
+                    "Okay okay, I'm here! What exactly should I send?"
+                ]
+                return rng.choice(responses)
+            
+            # Default contextual responses (better than generic)
+            responses = [
+                "I want to help! What information do you need from me?",
+                "Tell me exactly what I should do. I don't want any problems!",
+                "I'm ready to fix this. Walk me through the steps?",
+                "What details do you need? I'll provide everything!",
+                "I'm concerned about this. How can we resolve it?"
             ]
-            return fallbacks[seed]
+            return rng.choice(responses)
     
     def _select_persona(self, scam_type: Optional[str], turn_count: int) -> str:
         """Select appropriate persona based on scam type."""
