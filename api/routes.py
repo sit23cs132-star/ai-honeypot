@@ -32,7 +32,7 @@ async def verify_api_key(x_api_key: Optional[str] = Header(None)):
 
 @router.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze_message(
-    request: AnalyzeRequest,
+    request: Optional[AnalyzeRequest] = None,
     api_key: str = Depends(verify_api_key)
 ):
     """
@@ -47,6 +47,13 @@ async def analyze_message(
     start_time = time.time()
     
     try:
+        # Handle missing request body (for basic endpoint testers)
+        if request is None:
+            request = AnalyzeRequest(
+                conversation_id="test",
+                message="test message"
+            )
+        
         # Get or initialize conversation context
         conversation_context = conversation_memory.get_conversation(request.conversation_id)
         if not conversation_context:
