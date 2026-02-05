@@ -1,0 +1,1460 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "last_updated": "2026-02-05",
+    "total_scam_types": 18,
+    "coverage": "India + Global",
+    "emerging_threats_included": true
+  },
+  "scam_types": [
+    {
+      "scam_type": "UPI_FRAUD",
+      "category": "payment_fraud",
+      "risk_level": "critical",
+      "confidence_weight": 0.95,
+      "description": "Fraudsters trick users into sending money via UPI or sharing UPI PIN/OTP",
+      "example_messages": [
+        "Hello sir, I am from Paytm customer care. Your KYC is pending. Please complete verification by sending Rs.1 to this UPI: verify.paytm@paytm and share the 12-digit reference number",
+        "Congratulations! You have won Rs.50,000 in PhonePe lucky draw. To claim, send Rs.99 registration fee to winner2024@okaxis",
+        "Your bank account will be blocked in 2 hours. Verify immediately by sending Rs.1 to rbi.verify@ybl",
+        "Hi, I want to buy your product. I'll pay extra Rs.500. Please accept my payment request on Google Pay and confirm",
+        "Sir your Aadhaar is linked to 23 bank accounts. Suspicious activity detected. Send Rs.10 to cyberpolice@paytm to file complaint",
+        "Amazon refund of Rs.8,999 is pending. To process, please send us screenshot after accepting our UPI collect request",
+        "Your electricity will be disconnected today. Pay immediately to mseb.urgent@okicici or call 8080808080",
+        "I am buying your item. Please enter this UPI PIN to confirm the payment: Just enter your UPI PIN one time",
+        "Testing payment gateway. Send Re.1 to test@axis verification account. Money will be refunded with Rs.5000 instantly",
+        "Your phone number won bumper prize of Rs.25 lakh. Pay processing fee Rs.2500 to lottery.india@paytm to claim prize money"
+      ],
+      "keywords": [
+        "UPI", "paytm", "phonepe", "google pay", "gpay", "UPI PIN", "UPI ID", 
+        "@paytm", "@okaxis", "@ybl", "@icici", "@hdfc", "@sbi",
+        "send money", "payment request", "collect request", "accept payment",
+        "verification fee", "registration fee", "processing fee",
+        "KYC pending", "account blocked", "verify account"
+      ],
+      "regex_patterns": [
+        "\\b[a-zA-Z0-9._-]+@(paytm|phonepe|okaxis|okicici|okhdfc|oksbi|ybl|axl|ibl|apl)\\b",
+        "(?i)(send|transfer|pay)\\s*(me|us)?\\s*rs\\.?\\s*\\d+",
+        "(?i)(upi\\s*pin|upi\\s*id|upi\\s*password)",
+        "(?i)(accept|approve)\\s*(payment|money|collect)\\s*request",
+        "(?i)(verify|complete|update)\\s*kyc",
+        "(?i)won\\s*(rs\\.?|₹)\\s*\\d+",
+        "(?i)(registration|processing|verification|service)\\s*fee"
+      ],
+      "intent_signals": [
+        "urgency (account block, service disconnect)",
+        "authority impersonation (bank, RBI, cyber police)",
+        "fake rewards (lottery, lucky draw, cashback)",
+        "payment reversal tricks (asking victim to send money first)",
+        "KYC/verification scams",
+        "small amount trust building (Rs.1, Rs.10)",
+        "fake buyer/seller in marketplace"
+      ],
+      "psychological_triggers": [
+        "fear of account suspension",
+        "greed (prize money, cashback)",
+        "urgency (immediate action required)",
+        "authority compliance (RBI, police)",
+        "trust exploitation (small test payment)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate merchant UPI IDs",
+          "actual customer support conversations with ticket IDs"
+        ],
+        "context_checks": [
+          "verify if user initiated the transaction",
+          "check for established business relationship",
+          "validate against known legitimate merchant database"
+        ]
+      }
+    },
+    {
+      "scam_type": "OTP_THEFT",
+      "category": "credential_theft",
+      "risk_level": "critical",
+      "confidence_weight": 0.98,
+      "description": "Scammers trick users into sharing OTP codes for unauthorized access",
+      "example_messages": [
+        "Hello, this is HDFC Bank. Your account shows suspicious activity. Please share the OTP we just sent to verify your identity",
+        "You have received refund of Rs.6,500. To credit money to your account, share the 6-digit code we sent you",
+        "Your Aadhaar card will expire today. Urgent update needed. Tell us the OTP to complete e-KYC verification process",
+        "Sir, your credit card EMI payment failed. Share OTP immediately to avoid late charges and CIBIL score impact",
+        "This is Flipkart customer care. Your order is cancelled. For instant refund share OTP that came on your phone",
+        "Congratulations! You won iPhone 15. Customs clearance requires OTP verification. Tell me the code to release your prize",
+        "We are from SBI fraud department. Your card is being used in USA. To block transaction, tell us OTP immediately",
+        "Your Netflix subscription will expire. We sent verification code. Read it to me to continue your premium membership",
+        "Confirm your Aadhaar-PAN linking by sharing the 6-digit security code. Deadline is today or Rs.10000 penalty",
+        "Sir I am calling from Amazon. Your account hacked. Share OTP quickly so I can secure your account right now"
+      ],
+      "keywords": [
+        "OTP", "one time password", "verification code", "6-digit code", "4-digit code",
+        "security code", "SMS code", "authentication code", "confirm code",
+        "share OTP", "tell OTP", "read OTP", "what is the code",
+        "we sent", "you received", "check SMS", "check message",
+        "refund OTP", "verification OTP", "transaction OTP"
+      ],
+      "regex_patterns": [
+        "(?i)(share|tell|read|send|give|provide|enter)\\s*(the|me|us)?\\s*(otp|code|pin)",
+        "(?i)(6|4)[- ]?digit\\s*(otp|code|verification|security)",
+        "(?i)what('?s)?\\s*(is\\s*)?the\\s*(otp|code|verification)",
+        "(?i)(otp|code)\\s*(sent|received|came|arrived)",
+        "(?i)verify\\s*your\\s*(account|identity|card|aadhaar|pan)",
+        "(?i)refund\\s*(otp|code|verification)",
+        "(?i)suspicious\\s*activity.*otp"
+      ],
+      "intent_signals": [
+        "direct request for OTP/verification code",
+        "impersonating bank/e-commerce/government",
+        "creating urgency for OTP sharing",
+        "fake refund requiring OTP",
+        "fake fraud alert to get OTP",
+        "linking OTP to account security",
+        "customs/tax clearance requiring OTP"
+      ],
+      "psychological_triggers": [
+        "fear (account hacked, card blocked)",
+        "urgency (immediate action needed)",
+        "authority (bank, government, police)",
+        "greed (refund, prize, reward)",
+        "social proof (fake customer care)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate 2FA instructions from known services",
+          "user-initiated password reset flows"
+        ],
+        "context_checks": [
+          "never legitimate to ask user to share OTP verbally",
+          "real banks/services never ask for OTP via call/message",
+          "OTP is for user's eyes only - any sharing request is scam"
+        ]
+      }
+    },
+    {
+      "scam_type": "FAKE_DELIVERY_COURIER",
+      "category": "impersonation_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.88,
+      "description": "Fake delivery/courier scams involving payment for COD, customs, or redelivery",
+      "example_messages": [
+        "Hello, Fedex courier here. Your international parcel is stuck at customs. Pay Rs.1,850 clearance fee: bit.ly/customs-2024",
+        "Blue Dart delivery for you. COD amount Rs.2,499 but card machine not working. Pay online to secure.bluedart.xyz",
+        "Your Amazon package delivery failed. Reattempt charges Rs.150. Pay here: tinyurl.com/amzn-redeliver urgent",
+        "DHL courier notice: Your shipment from USA held at Mumbai customs. Pay duty Rs.4,999: dhl-india-customs.com/pay",
+        "Hello mam, I am delivery boy outside your house with parcel. COD Rs.799 but I have no change. Pay to 9876543210 UPI",
+        "IndiaPost registered parcel for you. Unclaimed since 3 days. Storage charges Rs.299. Pay immediately: indiapost-track.online",
+        "Your iPhone 14 order ready for delivery. Address verification fee Rs.99 pending. Confirm: apple-delivery-in.com",
+        "Urgent: Your parcel returned to warehouse. Re-delivery fee Rs.180. Pay now or package will be destroyed: bit.ly/deliver",
+        "DHL tracking update: International courier needs sign. Download label: dhl-shipping-india.net/pdf-3847291.apk",
+        "Mam your Flipkart order address is incomplete. Update + pay Rs.50 handling charge or order cancelled: flpkrt.co/update"
+      ],
+      "keywords": [
+        "courier", "delivery", "parcel", "package", "shipment", "consignment",
+        "COD", "cash on delivery", "customs", "clearance", "duty fee",
+        "fedex", "blue dart", "dhl", "dtdc", "india post", "amazon delivery",
+        "tracking number", "AWB number", "failed delivery", "reattempt",
+        "storage charges", "redelivery fee", "handling charges",
+        "delivery boy", "courier boy", "address verification"
+      ],
+      "regex_patterns": [
+        "(?i)(fedex|dhl|bluedart|dtdc|indiapost|ups|aramex).*custom",
+        "(?i)(delivery|courier|parcel|package).*(failed|stuck|held|pending)",
+        "(?i)(clearance|customs|duty|storage|redelivery|handling)\\s*(fee|charge)",
+        "(?i)cod\\s*(amount|payment|rs\\.?\\s*\\d+)",
+        "(?i)pay\\s*(rs\\.?|₹)?\\s*\\d+.*(delivery|courier|customs)",
+        "(?i)(track|tracking|awb|shipment).*\\d{10,}",
+        "(?i)(bit\\.ly|tinyurl|goo\\.gl).*/(delivery|courier|track|customs)"
+      ],
+      "intent_signals": [
+        "fake courier company impersonation",
+        "customs/clearance fee demand",
+        "COD payment pressure via online mode",
+        "failed delivery with redelivery charges",
+        "suspicious short URLs for payment",
+        "urgency (package will be returned/destroyed)",
+        "delivery attempt without actual delivery",
+        "APK file disguised as delivery label"
+      ],
+      "psychological_triggers": [
+        "urgency (package will be destroyed/returned)",
+        "fear of losing ordered item",
+        "small payment amount (Rs.50-500) to build trust",
+        "authority (courier/customs officials)",
+        "curiosity (what is the package?)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate courier tracking from official domains",
+          "actual COD delivery with physical presence"
+        ],
+        "context_checks": [
+          "verify domain authenticity (.com vs .co, .xyz, .online)",
+          "real couriers never ask for payment via UPI/links",
+          "customs fees for international packages go through official channels",
+          "APK files are never legitimate delivery documents"
+        ]
+      }
+    },
+    {
+      "scam_type": "FAKE_JOB_INTERNSHIP",
+      "category": "employment_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.85,
+      "description": "Fake job offers requiring registration fees, equipment costs, or advance payments",
+      "example_messages": [
+        "Congratulations! Selected for Google Work From Home position. Salary Rs.45,000/month. Pay Rs.2,500 training fee to start immediately",
+        "Amazon hiring for part-time product rating job. Earn Rs.15,000-30,000 monthly. Register here: amazon-jobs-india.online Rs.999 fee",
+        "Flipkart needs data entry workers urgently. Work from home. Earn Rs.25,000/month. One-time registration Rs.1,500 required",
+        "You are shortlisted for TCS virtual internship. 6-month certificate program. Enrollment fee Rs.5,000: tcs-internship-2024.com",
+        "Netflix content watching job available. Watch shows, get paid Rs.500 per day. Security deposit Rs.3,000 refundable",
+        "Urgently required 50 people for typing work. Earn Rs.20,000 monthly. Pay Rs.2,000 laptop setup fee: jobs-typing-india.net",
+        "Swiggy delivery executive vacancy in your area. Earn upto Rs.35,000. Registration + background check Rs.1,800 only",
+        "Microsoft hiring freshers for email processing. USA clients. Salary $800/month. Join: ms-careers-in.com One time fee Rs.4,500",
+        "Congratulations! Your profile selected by Infosys for remote position. Offer letter processing charges Rs.3,500. Pay immediately",
+        "Easy copy-paste job. Work 2 hours, earn Rs.1,000 daily. Join our Telegram group. Admin fee Rs.599 one time payment"
+      ],
+      "keywords": [
+        "work from home", "WFH", "part time job", "earn money online",
+        "registration fee", "training fee", "enrollment fee", "security deposit",
+        "data entry", "typing work", "copy paste", "email processing",
+        "google job", "amazon job", "flipkart hiring", "tcs internship",
+        "earn daily", "earn weekly", "guaranteed income", "easy money",
+        "selected", "shortlisted", "congratulations", "offer letter",
+        "laptop setup", "background check", "verification fee"
+      ],
+      "regex_patterns": [
+        "(?i)(work\\s*from\\s*home|wfh|remote\\s*job|online\\s*job)",
+        "(?i)(earn|make|get\\s*paid)\\s*(rs\\.?|₹)?\\s*\\d+.*(daily|per\\s*day|monthly|per\\s*month)",
+        "(?i)(registration|training|enrollment|joining|setup|verification)\\s*(fee|charge|cost)",
+        "(?i)(google|amazon|flipkart|swiggy|netflix|microsoft|tcs|infosys)\\s*(job|hiring|internship|vacancy)",
+        "(?i)(data\\s*entry|typing|copy[- ]?paste|email\\s*processing|product\\s*rating)",
+        "(?i)(selected|shortlisted|congratulations).*(job|position|internship|offer)",
+        "(?i)(guaranteed|easy|simple)\\s*(income|money|earnings)"
+      ],
+      "intent_signals": [
+        "fake job offer from reputed company",
+        "unrealistic salary for simple tasks",
+        "upfront payment requirement",
+        "urgency to join/register immediately",
+        "too good to be true offers",
+        "no interview/verification process",
+        "suspicious website URLs",
+        "telegram group for job communication"
+      ],
+      "psychological_triggers": [
+        "unemployment desperation",
+        "easy money appeal",
+        "brand name trust (Google, Amazon, etc.)",
+        "work from home convenience",
+        "urgency (limited seats, first come first serve)",
+        "social proof (lakhs of people earning)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate job portals (naukri.com, linkedin.com, indeed.com)",
+          "official company career pages"
+        ],
+        "context_checks": [
+          "real companies never charge registration fees",
+          "verify company email domain authenticity",
+          "unrealistic salary for minimal work is red flag",
+          "legitimate jobs have formal application process",
+          "telegram groups for job offers are suspicious"
+        ]
+      }
+    },
+    {
+      "scam_type": "CRYPTO_INVESTMENT_FRAUD",
+      "category": "investment_fraud",
+      "risk_level": "critical",
+      "confidence_weight": 0.92,
+      "description": "Cryptocurrency investment scams promising guaranteed returns and automated trading",
+      "example_messages": [
+        "I made Rs.8.5 lakh in just 60 days with AI crypto bot. Fully automated. Minimum Rs.10,000. Returns 15-20% daily. DM for proof",
+        "Bitcoin will reach $150,000 by March. Invest now in our trading pool. Guaranteed 300% profit. Only 25 slots left! Join: crypto-wealth.online",
+        "My mentor taught me crypto trading. Now earning Rs.5 lakh monthly. You can too! Start with Rs.5,000. WhatsApp: +91-9876543210",
+        "Elon Musk's new crypto coin launching today. Early investors getting 10x returns. Minimum investment: $100. Register: elonmars-token.net",
+        "Join our forex + crypto investment club. ROI: 25% per month guaranteed. My income proof attached. Investment starts at Rs.20,000",
+        "Binance trading bot - 98% success rate. Turn Rs.10,000 into Rs.50,000 in 30 days. Automated AI trading. Limited beta access",
+        "Government approved cryptocurrency scheme. Invest Rs.50,000 today, get Rs.2 lakh in 6 months. Official website: india-digital-rupee.org",
+        "I quit my job after learning crypto day trading. Earning Rs.15,000 daily now. Free training + trading signals. Register fee Rs.3,999",
+        "NEW: Bitcoin mining pool giving 5% daily returns. My friend invested Rs.1 lakh, now has Rs.8 lakh in 2 months. Join before slots fill",
+        "Crypto arbitrage opportunity! Buy low, sell high automatically. 400% annual returns. Minimum deposit Rs.25,000. Risk-free guarantee"
+      ],
+      "keywords": [
+        "crypto", "bitcoin", "ethereum", "cryptocurrency", "blockchain",
+        "trading bot", "AI bot", "automated trading", "crypto mining",
+        "guaranteed returns", "daily profit", "monthly ROI", "passive income",
+        "forex", "trading pool", "investment club", "arbitrage",
+        "made Rs", "earned Rs", "income proof", "salary proof",
+        "quit job", "financial freedom", "mentor", "training",
+        "limited slots", "early investor", "beta access", "exclusive"
+      ],
+      "regex_patterns": [
+        "(?i)(crypto|bitcoin|btc|ethereum|eth|forex|blockchain).*(bot|trading|investment|mining)",
+        "(?i)(made|earned|profit|returns?)\\s*(rs\\.?|₹|\\$)?\\s*\\d+.*(daily|per\\s*day|monthly|per\\s*month)",
+        "(?i)(guaranteed|assured|risk[- ]?free)\\s*(return|profit|roi|income)",
+        "(?i)\\d+%.*(?:daily|per\\s*day|weekly|monthly|annual).*(?:return|profit|roi)",
+        "(?i)(trading|investment)\\s*(bot|signal|pool|club|mentor|course)",
+        "(?i)(quit|left)\\s*(my\\s*)?job.*crypto",
+        "(?i)(minimum|start|invest)\\s*(rs\\.?|₹|\\$)?\\s*\\d+",
+        "(?i)(limited|exclusive|early)\\s*(slot|access|investor|opportunity)"
+      ],
+      "intent_signals": [
+        "guaranteed high returns (unrealistic percentages)",
+        "testimonial-based recruitment (I made X amount)",
+        "automated trading bot claims",
+        "urgency (limited slots, time-sensitive)",
+        "success story sharing",
+        "mentor-mentee recruitment model",
+        "celebrity endorsement (Elon Musk, etc.)",
+        "government approval claims",
+        "risk-free/guaranteed profit promises",
+        "daily profit percentages (5-20% daily)"
+      ],
+      "psychological_triggers": [
+        "FOMO (fear of missing out)",
+        "greed (easy money, quit job)",
+        "social proof (others earning lakhs)",
+        "authority (mentor, expert trader)",
+        "scarcity (limited slots, early bird)",
+        "aspiration (financial freedom)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "educational content about crypto (without investment pressure)",
+          "legitimate crypto news and analysis",
+          "regulated crypto exchanges (Coinbase, Binance official)"
+        ],
+        "context_checks": [
+          "no legitimate investment offers guaranteed returns",
+          "daily returns of 5-20% are mathematically impossible to sustain",
+          "celebrity endorsements are usually fake",
+          "pressure to invest immediately is red flag",
+          "testimonial-heavy content without substance"
+        ]
+      }
+    },
+    {
+      "scam_type": "LOAN_CREDIT_FRAUD",
+      "category": "financial_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.87,
+      "description": "Fake loan offers requiring advance fees, credit score improvement scams",
+      "example_messages": [
+        "Pre-approved personal loan of Rs.5 lakh at 0% interest. No documents needed. Pay Rs.4,500 processing fee to get amount instantly",
+        "Increase your CIBIL score from 550 to 750 in just 7 days. Guaranteed results. One-time fee Rs.2,999: cibilfix-india.com",
+        "HDFC Bank offers you credit card with Rs.2 lakh limit. Courier charges Rs.250 for card delivery. Pay now to receive card tomorrow",
+        "Your loan application approved! Rs.3 lakh ready to transfer. Pay Rs.1,850 verification fee to activate your bank account and receive money",
+        "Bad credit? No problem! We give loans to everyone. Rs.50,000 to Rs.10 lakh. Processing + insurance: Rs.5,500 advance payment required",
+        "Govt. Mudra loan scheme. Get Rs.10 lakh business loan at 4% interest. Registration fee Rs.3,000. Apply: mudrayojana-india.org",
+        "Pre-approved gold loan of Rs.2.5 lakh. No gold needed! Just pay Rs.2,000 service charge and money credited in 1 hour",
+        "Your credit score is low. We'll increase it to 800+ and get you instant loan. Success fee Rs.9,999 after seeing results",
+        "SBI offering special COVID relief loan. Rs.5 lakh at zero interest for 1 year. Documentation charges Rs.3,500 only. Limited period offer",
+        "Congratulations! Your income tax refund eligible for advance loan. Get Rs.1.5 lakh now. Pay Rs.999 admin fee: itr-refund-advance.in"
+      ],
+      "keywords": [
+        "pre-approved loan", "instant loan", "personal loan", "business loan",
+        "credit card approved", "credit limit", "no documents", "no collateral",
+        "processing fee", "verification fee", "documentation charges", "service charge",
+        "CIBIL score", "credit score", "improve credit rating", "fix CIBIL",
+        "0% interest", "low interest", "easy EMI", "flexible repayment",
+        "loan approved", "amount ready", "instant transfer", "same day loan",
+        "bad credit okay", "no credit check", "everyone approved",
+        "government loan scheme", "mudra loan", "subsidy loan"
+      ],
+      "regex_patterns": [
+        "(?i)(pre[- ]?approved|instant|immediate|same[- ]?day)\\s*loan",
+        "(?i)loan.*(?:rs\\.?|₹)\\s*\\d+.*(lakh|thousand)",
+        "(?i)(processing|verification|documentation|service|admin|courier)\\s*(fee|charge|cost)",
+        "(?i)(cibil|credit).*(score|rating|report).*(increase|improve|fix|repair)",
+        "(?i)(0%|zero|no)\\s*interest",
+        "(?i)(credit\\s*card|loan)\\s*approved",
+        "(?i)no\\s*(document|collateral|credit\\s*check|income\\s*proof)",
+        "(?i)(mudra|subsidy|government|pm|pmmy)\\s*loan"
+      ],
+      "intent_signals": [
+        "too-easy loan approval (no documents/checks)",
+        "advance fee requirement before loan disbursal",
+        "unrealistic terms (0% interest, huge amounts)",
+        "credit score improvement guarantees",
+        "impersonation of banks/govt schemes",
+        "urgency (limited time, offer expires)",
+        "courier charges for credit card delivery",
+        "activation/verification fees"
+      ],
+      "psychological_triggers": [
+        "financial desperation",
+        "easy money solution",
+        "authority (bank, government)",
+        "hope (credit score improvement)",
+        "urgency (limited period offer)",
+        "small upfront fee for large loan amount"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate bank loan communications",
+          "official government scheme websites (.gov.in)",
+          "regulated NBFCs and financial institutions"
+        ],
+        "context_checks": [
+          "real loans never require upfront fees before approval",
+          "0% interest is red flag (except specific EMI conversions)",
+          "instant approval without documents is impossible",
+          "credit score improvement takes time, no instant fixes",
+          "verify website domains carefully"
+        ]
+      }
+    },
+    {
+      "scam_type": "GOVERNMENT_IMPERSONATION",
+      "category": "authority_impersonation",
+      "risk_level": "critical",
+      "confidence_weight": 0.94,
+      "description": "Scammers impersonating government officials, tax authorities, police, courts",
+      "example_messages": [
+        "This is Income Tax Department. Your PAN card used in Rs.20 lakh fraud case. Arrest warrant issued. Pay Rs.50,000 penalty immediately to avoid arrest: incometax-clearance.com",
+        "Hello, I am calling from Cyber Crime Police Station. Your Aadhaar linked to drug trafficking case. Transfer Rs.85,000 investigation charges or face jail: cybercrime-portal-india.org",
+        "RBI notification: Your bank account involved in money laundering. Account will be seized. Pay Rs.15,000 clearance fee to rbi-verification@ybl to unfreeze",
+        "Supreme Court legal notice to you. Appear in court on Monday or pay Rs.1.2 lakh fine. Download notice: court-summons-india.com/notice.pdf",
+        "Aadhaar Authentication Failed. Your Aadhaar will be deactivated in 24 hours. Update immediately: uidai-aadhaar-update.in Penalty Rs.10,000 if delayed",
+        "This is TRAI calling. Your mobile number involved in spam SMS fraud. Number will be blocked today. Pay Rs.5,000 to prevent blocking",
+        "GST Department: Your GST returns show discrepancies. Tax evasion case filed. Pay pending Rs.35,000 + penalty Rs.15,000 urgently",
+        "Ministry of Home Affairs alert: Your passport used at Bangladesh border illegally. Surrender passport or pay Rs.40,000 investigation fee",
+        "Electricity department final notice. Outstanding dues Rs.8,450. Legal action + disconnection in 2 hours. Pay immediately: mseb.paybill.co.in",
+        "Central Bureau of Investigation (CBI): Your name in PM-CARES fund fraud list. Clear your name by paying Rs.1 lakh verification charges"
+      ],
+      "keywords": [
+        "income tax", "IT department", "PAN card", "tax refund", "tax notice",
+        "cyber crime", "cyber police", "police station", "FIR", "arrest warrant",
+        "RBI", "reserve bank", "money laundering", "account seized", "account frozen",
+        "supreme court", "high court", "legal notice", "court summons", "case filed",
+        "aadhaar", "UIDAI", "aadhaar card", "aadhaar update", "e-KYC",
+        "TRAI", "telecom", "mobile number blocked", "SIM blocked",
+        "GST", "goods and services tax", "tax evasion", "tax fraud",
+        "passport office", "MEA", "ministry", "government department",
+        "CBI", "ED", "enforcement directorate", "investigation",
+        "electricity department", "MSEB", "water department", "civic body"
+      ],
+      "regex_patterns": [
+        "(?i)(income\\s*tax|IT\\s*department|pan\\s*card).*(notice|refund|fraud|case|arrest)",
+        "(?i)(cyber\\s*crime|cyber\\s*police|police).*(case|FIR|warrant|investigation)",
+        "(?i)(rbi|reserve\\s*bank).*(account|money\\s*laundering|fraud|blocked|seized)",
+        "(?i)(court|legal\\s*notice|summons).*(appear|fine|penalty|case)",
+        "(?i)(aadhaar|uidai).*(deactivate|block|update|verify|expire)",
+        "(?i)(trai|telecom).*(block|suspend|deactivate|fraud)",
+        "(?i)gst.*(return|evasion|fraud|penalty|due)",
+        "(?i)(cbi|enforcement|investigation).*(case|fraud|verify|clear)",
+        "(?i)(pay|transfer|deposit)\\s*(rs\\.?|₹)?\\s*\\d+.*(immediately|urgent|today|now)"
+      ],
+      "intent_signals": [
+        "impersonating government authority",
+        "threats of arrest/legal action",
+        "account freezing/seizing threats",
+        "fabricated fraud/crime accusations",
+        "immediate payment demand",
+        "Aadhaar/PAN deactivation threats",
+        "fake legal notices/warrants",
+        "utility disconnection threats",
+        "investigation charges/clearance fees"
+      ],
+      "psychological_triggers": [
+        "extreme fear (arrest, jail)",
+        "authority compliance (government, police, court)",
+        "urgency (immediate action required)",
+        "confusion (complex legal jargon)",
+        "intimidation tactics",
+        "social shame (public accusation)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "official government websites (.gov.in domain)",
+          "legitimate tax notices via registered post",
+          "actual utility bills from verified sources"
+        ],
+        "context_checks": [
+          "government never demands immediate payment via phone/message",
+          "real legal notices come through registered post",
+          "police don't ask for money over phone",
+          "verify .gov.in domain authenticity",
+          "government departments don't use UPI/third-party payment links"
+        ]
+      }
+    },
+    {
+      "scam_type": "CUSTOMER_CARE_IMPERSONATION",
+      "category": "support_impersonation",
+      "risk_level": "high",
+      "confidence_weight": 0.89,
+      "description": "Fake customer support scams for banks, e-commerce, telecom, streaming services",
+      "example_messages": [
+        "Hello, this is HDFC Bank customer care. We detected unauthorized transaction of Rs.25,000 from your account. To block, share OTP immediately",
+        "Amazon Prime customer support. Your account hacked from IP 103.24.56.78. To secure account share the verification code we sent you",
+        "This is Airtel customer care. Your number will be disconnected due to KYC pending. Update now by clicking: airtel-kyc-update.co and pay Rs.50",
+        "Netflix billing department. Payment method declined. Your subscription ends today. Update card details: netflix-payment-fix.online",
+        "Google Pay support here. Someone tried to link your account to new device. If not you, share OTP to block that device right now",
+        "Paytm KYC pending since 90 days. Account will be suspended. Complete e-KYC: paytm-verify.com (Upload Aadhaar front + back + PAN card)",
+        "ICICI Bank fraud department. Your debit card used in suspicious Rs.45,000 transaction in Dubai. Tell us CVV to cancel this transaction",
+        "Flipkart customer care. Your order payment failed but amount deducted. For refund share OTP and we will process Rs.6,999 back to account",
+        "Jio customer service. Your recharge expired but Rs.666 pending refund. Claim refund: jio-refund-portal.net Enter SIM number + Aadhaar details",
+        "WhatsApp verification team. Your account will be banned due to policy violation. Verify here to continue: wa-verify-account.com/check"
+      ],
+      "keywords": [
+        "customer care", "customer support", "customer service", "helpline",
+        "fraud department", "security team", "billing department", "verification team",
+        "hdfc bank", "sbi bank", "icici bank", "axis bank", "paytm", "phonepe",
+        "amazon", "flipkart", "myntra", "meesho", "swiggy", "zomato",
+        "netflix", "prime video", "hotstar", "spotify", "youtube premium",
+        "airtel", "jio", "vi", "vodafone", "bsnl",
+        "KYC pending", "account suspended", "account blocked", "verify account",
+        "unauthorized transaction", "suspicious activity", "account hacked",
+        "share OTP", "share CVV", "card details", "Aadhaar details"
+      ],
+      "regex_patterns": [
+        "(?i)(customer|support|service|helpline|care).*(bank|amazon|flipkart|netflix|paytm|airtel|jio)",
+        "(?i)(fraud|security|billing|verification)\\s*(department|team)",
+        "(?i)(unauthorized|suspicious|unusual)\\s*(transaction|activity|login|payment)",
+        "(?i)(kyc|account).*(pending|suspended|blocked|expired|expire)",
+        "(?i)(share|tell|provide|enter|update).*(otp|cvv|pin|password|card\\s*detail|aadhaar)",
+        "(?i)(verify|update|confirm).*account",
+        "(?i)(refund|payment).*(failed|declined|pending|reversed)",
+        "(?i)(ip|device|location).*(detected|unauthorized|suspicious)"
+      ],
+      "intent_signals": [
+        "impersonating legitimate company support",
+        "fake security alerts",
+        "KYC completion pressure",
+        "requesting sensitive information (OTP, CVV, PIN)",
+        "phishing links mimicking company websites",
+        "refund/payment failure tactics",
+        "account suspension threats",
+        "urgent verification requirements"
+      ],
+      "psychological_triggers": [
+        "fear of loss (account suspended, money stolen)",
+        "trust in brand (Amazon, HDFC, Netflix, etc.)",
+        "urgency (act now or lose access)",
+        "authority (official support team)",
+        "confusion (technical jargon)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "official customer support initiated by user",
+          "verified support channels (official app, website)",
+          "legitimate service notifications"
+        ],
+        "context_checks": [
+          "real support never asks for OTP, CVV, PIN",
+          "verify sender/caller authenticity",
+          "check URL domains carefully (typo domains)",
+          "support teams don't send payment links via SMS/WhatsApp",
+          "user should always contact support via official channels"
+        ]
+      }
+    },
+    {
+      "scam_type": "ROMANCE_SCAM",
+      "category": "relationship_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.82,
+      "description": "Online romance scams targeting lonely individuals for money",
+      "example_messages": [
+        "Hi dear, I am US Army officer stationed in Afghanistan. I love you so much. Need Rs.80,000 for emergency flight to meet you. Will return money with interest",
+        "My love, you are my soulmate. I am sending you $50,000 gift from UK but stuck in customs. Pay Rs.25,000 clearance fee to receive my gift",
+        "Darling, I got job in India to be with you! But need Rs.60,000 visa processing fee urgently. After I come we will marry and I'll give you everything",
+        "Sweetheart, my father died and left Rs.50 lakh but money blocked. Need Rs.1.5 lakh lawyer fee to release inheritance then we can start our life",
+        "Baby, I'm doctor in WHO mission in Syria. Want to come meet you but passport expired. Send Rs.40,000 for emergency passport processing",
+        "My dear, I booked ticket to India tomorrow! So excited! But airline asking Rs.35,000 travel insurance. Can you pay? I'll return after reaching",
+        "Honey, I love you more than anything. My son is sick and hospital asking Rs.1.2 lakh for surgery. Please help me. I promise to marry you",
+        "My treasure, customs seized my luggage with your gifts worth $20,000. Share your bank OTP so I can pay Rs.18,000 clearance charges",
+        "Darling, remember I told you about my Bitcoin trading? Lost Rs.2 lakh due to market crash. Lend me Rs.50,000 to recover. Will return 3x amount",
+        "My princess, I am coming to India next month to meet your parents. Need Rs.25,000 to buy engagement ring for you. You are my future wife"
+      ],
+      "keywords": [
+        "my love", "my dear", "darling", "sweetheart", "honey", "baby", "soulmate",
+        "I love you", "marry me", "marry you", "future wife", "future husband",
+        "US army", "military", "soldier", "doctor", "engineer", "businessman",
+        "stationed", "mission", "deployed", "overseas", "foreign country",
+        "emergency", "urgent help", "need money", "financial problem",
+        "customs", "visa", "ticket", "flight", "passport", "travel",
+        "gift for you", "coming to meet", "inheritance", "blocked money",
+        "promise to return", "will repay", "trust me", "believe me",
+        "lonely", "understand me", "only you", "special connection"
+      ],
+      "regex_patterns": [
+        "(?i)(my|dear|darling|sweetheart|honey|baby|love).*(love|marry|soulmate|future)",
+        "(?i)(us\\s*army|military|soldier|doctor|engineer|businessman|model).*(stationed|overseas|foreign|abroad)",
+        "(?i)(need|send|lend|borrow)\\s*(rs\\.?|₹|\\$)?\\s*\\d+.*(emergency|urgent|help|problem)",
+        "(?i)(customs|visa|ticket|flight|passport|travel).*(fee|charge|cost|stuck|blocked)",
+        "(?i)(gift|money|inheritance|package).*(send|deliver|stuck|blocked|seized)",
+        "(?i)(promise|will\\s*return|will\\s*repay|trust\\s*me|believe\\s*me)",
+        "(?i)(coming\\s*to|meet\\s*you|be\\s*with\\s*you|marry\\s*you)"
+      ],
+      "intent_signals": [
+        "rapid romantic escalation",
+        "claimed foreign/military background",
+        "never met in person",
+        "emergency money requests",
+        "customs/visa/travel fee demands",
+        "inheritance/gift blocking stories",
+        "promises to visit/marry",
+        "emotional manipulation",
+        "creating dependency and trust"
+      ],
+      "psychological_triggers": [
+        "loneliness and isolation",
+        "desire for love and companionship",
+        "emotional vulnerability",
+        "trust building through affection",
+        "urgency and emergency scenarios",
+        "future promises (marriage, life together)",
+        "guilt manipulation"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "genuine long-term relationships with established trust",
+          "relationships with in-person meetings"
+        ],
+        "context_checks": [
+          "never send money to someone you haven't met",
+          "romance + money request is major red flag",
+          "verify identity through video calls (not photos)",
+          "overseas emergency stories are common scam tactics",
+          "real relationships don't start with money requests"
+        ]
+      }
+    },
+    {
+      "scam_type": "EMERGENCY_FAMILY_SCAM",
+      "category": "impersonation_fraud",
+      "risk_level": "critical",
+      "confidence_weight": 0.91,
+      "description": "Scammers impersonating family members in distress requiring urgent money",
+      "example_messages": [
+        "Mom, my phone broken. This is my new number. Urgent! I met with accident. Need Rs.75,000 for hospital immediately. Send to this account: 1234567890123",
+        "Dad, I am in police station. Got caught in friend's car with drugs. Need Rs.1.5 lakh bail money right now. Don't call my number, it's seized. Send to lawyer account",
+        "Papa, I am stuck at airport. Passport issue. Immigration asking Rs.50,000 penalty. Pay immediately or I will be deported and jailed. UPI: airport.help@okaxis",
+        "Hello Aunty, this is Dr. Sharma from Apollo Hospital. Your son met accident, critical condition. Need Rs.2 lakh for immediate surgery. Family not reachable",
+        "Didi, I am your brother Rahul. Phone stolen, this is friend's number. Stuck in Delhi with no money. Send Rs.15,000 urgently to this UPI: urgent.help@paytm",
+        "Mummy, please don't get angry. I am pregnant. Need Rs.80,000 for safe abortion. If papa finds out he'll kill me. Send fast to: medical.care@okicici",
+        "Sir, your daughter met accident near Pune. I am good samaritan who helped. She is unconscious. Hospital demanding Rs.50,000 deposit. Please send immediately",
+        "Bhai, I am in big trouble. Lost company laptop. Boss asking Rs.65,000 for laptop cost or will file police case. Save me! Pay to: save.me@ybl urgent",
+        "Madam this is cyber crime police. Your son's Aadhaar used in Rs.10 lakh fraud. He is under arrest. Pay Rs.2 lakh penalty to release him immediately",
+        "Papa, my ATM swallowed during withdrawal. Need Rs.25,000 cash urgently for event ticket booking. It closes in 1 hour. Please send to my friend: 9876543210"
+      ],
+      "keywords": [
+        "mom", "dad", "papa", "mummy", "maa", "bhai", "didi", "aunty", "uncle",
+        "son", "daughter", "brother", "sister", "grandson", "granddaughter",
+        "accident", "hospital", "emergency", "critical", "urgent help needed",
+        "police station", "arrested", "bail", "lawyer", "court",
+        "phone broken", "new number", "phone stolen", "phone lost",
+        "stuck", "stranded", "trapped", "no money", "no option",
+        "don't tell", "secret", "don't call", "phone seized",
+        "immediate", "right now", "within 1 hour", "before 5pm",
+        "send money", "transfer amount", "pay immediately"
+      ],
+      "regex_patterns": [
+        "(?i)(mom|dad|mummy|papa|son|daughter|brother|sister|bhai).*(accident|hospital|emergency|urgent)",
+        "(?i)(police|arrest|bail|court|lawyer).*(need|send)\\s*rs",
+        "(?i)(phone|number).*(broken|stolen|lost|new|changed)",
+        "(?i)(stuck|stranded|trapped).*(need|send|help).*money",
+        "(?i)(don't|do\\s*not).*(tell|call|inform|contact)",
+        "(?i)(immediate|urgent|right\\s*now|within\\s*\\d+\\s*hour)",
+        "(?i)(this\\s*is\\s*my\\s*new|changed\\s*my)\\s*number",
+        "(?i)(hospital|doctor|medical).*(emergency|surgery|operation|critical)"
+      ],
+      "intent_signals": [
+        "family member impersonation",
+        "emergency/crisis scenario",
+        "urgency for immediate money transfer",
+        "new/changed number claim",
+        "preventing victim from verifying",
+        "hospital/police/legal emergency",
+        "secrecy demands (don't tell others)",
+        "emotional manipulation"
+      ],
+      "psychological_triggers": [
+        "extreme worry (child/parent in danger)",
+        "panic response to emergency",
+        "parental/familial protection instinct",
+        "fear of legal trouble",
+        "urgency overriding logical thinking",
+        "secrecy exploitation",
+        "guilt manipulation"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "actual family emergencies with proper verification",
+          "confirmed family member communications"
+        ],
+        "context_checks": [
+          "always verify through independent contact with family member",
+          "call back on known number, don't use provided number",
+          "family members don't demand instant money transfers",
+          "verify hospital/police station claims independently",
+          "new number + emergency = major red flag",
+          "take time to verify despite urgency claims"
+        ]
+      }
+    },
+    {
+      "scam_type": "FAKE_REFUND_CHARGEBACK",
+      "category": "payment_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.86,
+      "description": "Scams involving fake refunds requiring account access or reverse payment tricks",
+      "example_messages": [
+        "Your Amazon order cancelled. Refund Rs.4,999 processing. We'll send OTP, share it to complete refund to your account within 30 minutes",
+        "Flipkart customer care: Wrong amount debited (Rs.9,999 instead of Rs.999). For refund correction we need to access your phone via AnyDesk. Install: bit.ly/refund-fix",
+        "Your electricity bill overpayment of Rs.1,850 detected. Refund available. Download our official app to claim: mseb-refund-app.apk",
+        "Zomato: Double payment error. Rs.550 x 2 charged. Install TeamViewer for refund: zomato-refund-support.com/tv Our tech will reverse extra amount",
+        "Sir, Paytm mistakenly credited Rs.50,000 to your wallet. It's our company error. Return it or face legal action. Pay to paytm.returns@okaxis within 24 hours",
+        "Your Jio recharge failed but money deducted. Refund processing. Install QuickSupport app and share 9-digit code for instant Rs.399 refund",
+        "Bank error: Rs.25,000 wrongly transferred to your account by HDFC Bank. You must return it immediately or fraud case will be filed against you",
+        "Swiggy order refund Rs.750 pending. To process we need your bank app login. Our agent will guide you via AnyDesk. Install now: swiggy-refund.co",
+        "Google Pay sent you Rs.10,000 by mistake. This is fraudulent amount. If you don't return within 2 hours police complaint will be registered",
+        "Your refund of Rs.3,500 approved but our system needs verification. Accept collect request on your UPI app to receive money back"
+      ],
+      "keywords": [
+        "refund", "amount refund", "money back", "return amount", "reverse payment",
+        "wrong payment", "double payment", "overpayment", "excess amount",
+        "mistakenly credited", "wrongly transferred", "system error", "technical error",
+        "anydesk", "teamviewer", "quicksupport", "remote access", "screen sharing",
+        "install app", "download app", "share code", "share screen",
+        "refund processing", "claim refund", "collect refund",
+        "legal action", "police complaint", "fraud case", "return immediately",
+        "accept collect request", "approve payment", "verify transaction"
+      ],
+      "regex_patterns": [
+        "(?i)refund.*(rs\\.?|₹)?\\s*\\d+",
+        "(?i)(wrong|double|excess|over)[- ]?payment",
+        "(?i)(mistakenly|wrongly|accidentally).*(credit|transfer|sent|paid)",
+        "(?i)(anydesk|teamviewer|quicksupport|remote).*(install|download|access)",
+        "(?i)(install|download).*(app|apk|software).*refund",
+        "(?i)(share|tell|provide).*(code|otp|screen).*refund",
+        "(?i)return.*(amount|money|payment|rs).*(immediately|urgent|legal)",
+        "(?i)(accept|approve).*(collect\\s*request|payment\\s*request).*refund"
+      ],
+      "intent_signals": [
+        "fake refund offer requiring OTP",
+        "remote access software installation demand",
+        "reverse scam (claiming victim received wrong money)",
+        "APK file installation for refund",
+        "UPI collect request for refund",
+        "screen sharing for refund processing",
+        "legal threats if money not returned",
+        "urgency in refund claim"
+      ],
+      "psychological_triggers": [
+        "desire to get money back",
+        "fear of missing refund",
+        "urgency (time limit)",
+        "fear of legal action (reverse scam)",
+        "trust in refund process",
+        "compliance with authority"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate refund notifications from verified sources",
+          "refunds processed automatically without user action"
+        ],
+        "context_checks": [
+          "refunds never require OTP sharing",
+          "remote access apps = scam in refund context",
+          "companies don't send APK files for refunds",
+          "UPI collect requests for refund is backwards (should be payment)",
+          "mistaken credit claims are social engineering",
+          "real refunds happen automatically, no user action needed"
+        ]
+      }
+    },
+    {
+      "scam_type": "QR_CODE_PAYMENT_TRAP",
+      "category": "payment_fraud",
+      "risk_level": "critical",
+      "confidence_weight": 0.93,
+      "description": "Scammers trick users into scanning QR codes that initiate payments instead of receiving money",
+      "example_messages": [
+        "Sir I am buyer for your OLX item. I will pay Rs.15,000. Scan this QR code to receive money. [Sends payment QR instead of receive QR]",
+        "Great! I'll buy your furniture. To confirm you're genuine seller scan my verification QR. This will show I sent Rs.8,000 [Actually debit QR]",
+        "Hello, I want to purchase. I'm sending Rs.12,000. Please scan this QR to accept payment. Money will come in 5 minutes [Sends payment QR]",
+        "I'm interested in your product. For online payment security, scan this QR to activate receiving mode on Google Pay [Tricks into paying]",
+        "Hi, buying your laptop. Sent Rs.25,000. Scan QR to confirm receipt. If money not received after scan, I'll resend [Makes victim pay instead]",
+        "Payment gateway verification needed. Scan this QR code to enable receiving payment from me. This is Paytm security feature [Payment QR disguised]",
+        "I'll pay extra Rs.1,000 for urgent delivery. Just scan my QR for instant payment. Show me screenshot after scanning [Makes victim pay]",
+        "Your item interested. Payment by UPI. Scan QR in this image to get Rs.10,000 in your account within 30 seconds [Reverse payment trick]",
+        "Amazon buyer here. Scan this QR to verify your seller account for payment of Rs.6,500. This is buyer protection code [Payment QR trap]",
+        "Sir one minute. My PhonePe not working. You have Google Pay? Scan this code to receive my payment Rs.4,999 [Sends debit QR instead]"
+      ],
+      "keywords": [
+        "scan QR", "scan code", "scan this", "QR code", "QR payment",
+        "receive money", "accept payment", "receive payment", "get money",
+        "verify seller", "verify buyer", "verify account", "activate receiving",
+        "payment security", "payment gateway", "payment confirmation",
+        "show screenshot", "send screenshot", "screenshot after scan",
+        "OLX buyer", "Quikr buyer", "Facebook marketplace", "interested in product",
+        "paying extra", "advance payment", "urgent delivery",
+        "money will come", "amount will credit", "instant payment"
+      ],
+      "regex_patterns": [
+        "(?i)scan.*(qr|code|this|image)",
+        "(?i)(receive|accept|get).*(money|payment|amount).*scan",
+        "(?i)scan.*(verify|confirm|activate|enable|security)",
+        "(?i)(olx|quikr|facebook|marketplace).*(buyer|seller|product)",
+        "(?i)(pay|paying).*(extra|rs\\.?\\s*\\d+).*scan",
+        "(?i)scan.*(screenshot|show|send|confirm)",
+        "(?i)(payment|money).*(will\\s*come|will\\s*credit|instant).*scan"
+      ],
+      "intent_signals": [
+        "asking to scan QR to receive money (reversal trick)",
+        "verification/activation via QR code",
+        "buyer/seller context with QR scan request",
+        "urgency in scanning QR",
+        "screenshot request after scanning",
+        "technical jargon to confuse (activate receiving mode)",
+        "extra payment promises",
+        "online marketplace transaction context"
+      ],
+      "psychological_triggers": [
+        "desire to receive money quickly",
+        "trust in QR payment system",
+        "confusion (technical terms)",
+        "greed (extra payment)",
+        "urgency (buyer is waiting)",
+        "social proof (normal transaction process)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate merchant QR codes for receiving payments",
+          "clear payment direction awareness"
+        ],
+        "context_checks": [
+          "receiving money = share YOUR QR, not scan theirs",
+          "paying money = scan THEIR QR",
+          "buyer never sends QR to seller for payment",
+          "seller sends QR to buyer for payment",
+          "verify QR direction before scanning",
+          "genuine buyers use payment apps directly, not verification QRs"
+        ]
+      }
+    },
+    {
+      "scam_type": "PHISHING_LINKS",
+      "category": "credential_theft",
+      "risk_level": "critical",
+      "confidence_weight": 0.96,
+      "description": "Malicious links designed to steal credentials, install malware, or redirect to fake websites",
+      "example_messages": [
+        "Your Amazon Prime expired. Renew now: amaz0n-prime-india.com (50% discount for 24 hours only)",
+        "Click here for your electricity bill: bit.ly/mseb-feb-2024 Pay before 5 PM or connection cut",
+        "HDFC Bank: Suspicious login from new device. Secure account now: hdfcbank-secure.online",
+        "Income Tax Refund approved! Claim Rs.18,456: incometax-refund-india.co.in/claim",
+        "You won iPhone 15 in Flipkart anniversary! Claim: flipkart-winner-2024.net Register with Aadhaar + PAN",
+        "WhatsApp will start charging Rs.499/year. To keep it free click: whatsapp-free-forever.com/register",
+        "Your Google account accessed from unknown location. Verify: google-security-check.org immediately",
+        "SBI account locked due to failed login attempts. Unlock: sbi-unlock-account.co.in (Enter debit card + CVV + OTP)",
+        "Aadhaar-PAN linking pending. Penalty Rs.10,000 after March 31. Complete now: uidai-pan-link.online",
+        "Paytm KYC incomplete. Upload documents: paytmkyc.com (Aadhaar front, back, selfie, PAN scan required)"
+      ],
+      "keywords": [
+        "click here", "click now", "tap here", "visit link", "open link",
+        "bit.ly", "tinyurl", "goo.gl", "t.co", "ow.ly", "short url",
+        "account locked", "account suspended", "verify account", "secure account",
+        "claim now", "claim prize", "claim refund", "register here",
+        "expired", "expiring", "renew now", "update now", "verify now",
+        "limited time", "24 hours", "today only", "expires today",
+        "upload documents", "submit details", "enter information",
+        "login", "sign in", "verify identity", "confirm details"
+      ],
+      "regex_patterns": [
+        "(?i)(click|tap|visit|open)\\s*(here|now|this|link)",
+        "(?i)(bit\\.ly|tinyurl\\.com|goo\\.gl|t\\.co|ow\\.ly|short\\.io)/[a-zA-Z0-9]+",
+        "(?i)(http|https)://[a-zA-Z0-9.-]+(co\\.in|online|xyz|site|top|club|info|net)(?!/)",
+        "(?i)(amazon|flipkart|bank|google|whatsapp|aadhaar|paytm)[a-z0-9-]*(com|co\\.in|online|net|org)",
+        "(?i)(account|subscription).*(expire|lock|suspend|block).*link",
+        "(?i)(claim|register|verify|upload|login).*(here|now|link)",
+        "(?i)(prize|refund|reward|winner).*claim.*(link|here)"
+      ],
+      "intent_signals": [
+        "suspicious short URLs",
+        "typosquatting domains (amaz0n vs amazon)",
+        "non-official domain extensions (.online, .xyz, .co.in when .com expected)",
+        "urgency in link clicking",
+        "credential/document upload requests",
+        "account security threats via links",
+        "prize/refund claims via links",
+        "brand impersonation with fake domains"
+      ],
+      "psychological_triggers": [
+        "urgency (expires today, limited time)",
+        "fear (account locked, security threat)",
+        "greed (prize, reward, refund)",
+        "curiosity (see who viewed profile)",
+        "trust (looks like official brand)",
+        "habit (auto-clicking links)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "official brand domains with HTTPS",
+          "government .gov.in domains",
+          "well-known legitimate short URLs in proper context"
+        ],
+        "context_checks": [
+          "verify domain spelling carefully",
+          "check for HTTPS and padlock",
+          "hover over links to see actual URL",
+          "legitimate services use official domains",
+          "banks never send login links via message",
+          "government sites always end in .gov.in"
+        ]
+      }
+    },
+    {
+      "scam_type": "SOCIAL_MEDIA_MARKETPLACE_SCAM",
+      "category": "e_commerce_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.84,
+      "description": "Scams on Facebook Marketplace, OLX, Quikr involving fake buyers/sellers",
+      "example_messages": [
+        "Hi, item available? I'll take it. Send your UPI QR for advance payment Rs.2,000. Will collect tomorrow with remaining amount",
+        "Interested in your phone. I'm from another city. Send me on courier. I'll pay full Rs.15,000 + courier charges Rs.800 advance via Google Pay",
+        "Buying your laptop for my son's birthday. Urgent! Pay you Rs.30,000 now. But my daily UPI limit over. Accept payment request to receive money",
+        "Hello seller, product exactly what I need! I'll send delivery person to collect. Pay you Rs.8000 online. First send product photo with today's newspaper",
+        "Sir I am army officer posted in Kashmir. Want to buy your bike for Rs.50,000. Advance payment Rs.5,000 sent. Check your account and confirm the OTP",
+        "Item looks good. I'll pay Rs.12,000 extra if you deliver today. First you pay Rs.1000 BLR to Mumbai courier charge, I'll add in final payment",
+        "Hi, buying for my mom's gift. Pay Rs.9,000 full amount right now. Send product via courier. I'll share my office address for delivery",
+        "Interested buyer here. You take online payment? Install this payment gateway app to receive my Rs.6,500: secure-payment-india.apk",
+        "Sir I'll pay via credit card. For card payment you need to share card processing OTP. I'm sending Rs.28,000 to your account in 2 minutes",
+        "I want this urgently. Pay double amount Rs.4,000. Show me your GPay QR. I'll scan and pay. [Sends fake payment screenshot after victim shares QR]"
+      ],
+      "keywords": [
+        "interested", "item available", "buying", "will take", "want to buy",
+        "advance payment", "partial payment", "full payment", "online payment",
+        "another city", "outstation", "courier", "delivery person", "shipping",
+        "daily limit", "limit exceeded", "payment issue", "bank issue",
+        "army officer", "navy", "urgent posting", "transferring city",
+        "gift", "birthday", "anniversary", "urgent need",
+        "pay extra", "paying more", "double amount", "additional amount",
+        "OLX", "Quikr", "Facebook Marketplace", "product listing",
+        "today's newspaper", "product verification", "genuine seller proof"
+      ],
+      "regex_patterns": [
+        "(?i)(interested|buying|will\\s*take).*product",
+        "(?i)(advance|partial|full|online)\\s*payment",
+        "(?i)(another\\s*city|outstation|courier|delivery|shipping)",
+        "(?i)(daily\\s*limit|limit\\s*exceed|payment\\s*issue|bank\\s*issue)",
+        "(?i)(army|navy|military|urgent\\s*posting|transfer)",
+        "(?i)(pay\\s*extra|paying\\s*more|double\\s*amount|additional)",
+        "(?i)(today's\\s*newspaper|verification|proof|genuine\\s*seller)",
+        "(?i)accept\\s*(payment|collect)\\s*request"
+      ],
+      "intent_signals": [
+        "eager buyer with advance payment offer",
+        "outstation buyer avoiding in-person meeting",
+        "reverse payment tricks (accept collect request)",
+        "extra payment for urgency",
+        "third-party involvement (delivery person)",
+        "courier cost sharing scams",
+        "verification tricks (newspaper photo)",
+        "fake payment screenshots",
+        "APK installation for payment",
+        "impersonation (army, urgent buyer)"
+      ],
+      "psychological_triggers": [
+        "eager buyer enthusiasm",
+        "extra money offer (greed)",
+        "urgency (needed today, gift deadline)",
+        "trust building (advance payment)",
+        "authority (army, professional)",
+        "convenience (online payment, courier)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate marketplace transactions with in-person exchange",
+          "verified buyer profiles with history"
+        ],
+        "context_checks": [
+          "too-eager buyers are suspicious",
+          "outstation buyers preferring courier = red flag",
+          "extra payment offers = scam indicator",
+          "accept collect request = paying, not receiving",
+          "newspaper photo verification is social engineering",
+          "meet in person for high-value items",
+          "prefer cash on delivery for marketplace"
+        ]
+      }
+    },
+    {
+      "scam_type": "TECH_SUPPORT_SCAM",
+      "category": "technical_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.87,
+      "description": "Fake tech support claiming virus/hacking and demanding payment or remote access",
+      "example_messages": [
+        "ALERT! Your computer infected with 23 viruses. Your data will be stolen in 48 hours. Call Microsoft Support: 1800-208-4544 immediately",
+        "Warning: Suspicious activity detected on your device. Your photos and contacts are being uploaded to dark web. Install protection: antivirus-india.apk",
+        "Google Security Alert: Your phone hacked by Chinese hackers. All banking apps compromised. Install security fix urgently: google-security-2024.com",
+        "Your Windows license expired. Your computer will stop working in 24 hours. Renew now Rs.2,500. Call tech support 1800-547-9999",
+        "Apple ID disabled due to security breach. Your iPhone will be locked permanently. Verify here: apple-id-verify-india.com Enter Apple ID password",
+        "McAfee subscription expired 45 days ago. Your device unprotected. Renew Rs.3,999 or cancel subscription refund Rs.9,999: mcafee-india-support.online",
+        "TeamViewer security: Your license verification failed. Remote access blocked. Pay Rs.1,500 renewal: teamviewer-renew.co.in",
+        "Norton detected trojan virus in your system. Data encryption starting. Stop it now by calling support: 1800-102-7890 or device will crash",
+        "Your Chrome browser outdated and vulnerable. Update now to avoid hackers: chrome-update-india.apk Auto-install security patches",
+        "Facebook account hacked from Russia. Your friends receiving spam. Fix urgently: fb-security-check.com/ Enter password to secure account"
+      ],
+      "keywords": [
+        "virus", "malware", "trojan", "spyware", "hacked", "infected",
+        "microsoft support", "google security", "apple support", "tech support",
+        "call immediately", "call now", "support helpline", "toll free",
+        "computer will stop", "phone will lock", "device crash", "data stolen",
+        "dark web", "hackers", "cyber attack", "security breach",
+        "install antivirus", "install security", "install protection",
+        "remote access", "teamviewer", "anydesk", "quicksupport",
+        "license expired", "subscription expired", "renew now",
+        "windows", "chrome", "facebook", "mcafee", "norton"
+      ],
+      "regex_patterns": [
+        "(?i)(virus|malware|trojan|hacked|infected|breach).*device",
+        "(?i)(microsoft|google|apple|norton|mcafee)\\s*support",
+        "(?i)call.*(immediately|now|urgent).*\\d{4}[- ]?\\d{3}[- ]?\\d{4}",
+        "(?i)(computer|phone|device).*(stop|lock|crash|block)",
+        "(?i)(install|download).*(antivirus|security|protection|fix).*(apk|exe|com)",
+        "(?i)(license|subscription).*(expire|renew|activate)",
+        "(?i)(remote\\s*access|teamviewer|anydesk).*(install|download|allow)",
+        "(?i)(data|photo|contact).*(stolen|upload|dark\\s*web)"
+      ],
+      "intent_signals": [
+        "fake virus/malware warnings",
+        "impersonating tech companies (Microsoft, Google, Apple)",
+        "remote access software installation demand",
+        "fake support phone numbers",
+        "expired license/subscription scares",
+        "urgency (data at risk, device will stop)",
+        "APK/EXE file installations",
+        "fake security alerts"
+      ],
+      "psychological_triggers": [
+        "extreme fear (virus, hacking, data theft)",
+        "urgency (device will crash, time limit)",
+        "authority (Microsoft, Google, etc.)",
+        "technical confusion (jargon overload)",
+        "loss aversion (photos, contacts stolen)",
+        "safety desire (protect device)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate antivirus notifications from installed software",
+          "official OS update notifications",
+          "actual security alerts from device/browser"
+        ],
+        "context_checks": [
+          "real tech companies never cold call for support",
+          "legitimate security alerts don't ask to call numbers",
+          "browser popups with support numbers are fake",
+          "real updates happen through official app stores/system",
+          "Microsoft/Google don't detect viruses via messages",
+          "remote access requests for 'fixes' are scams"
+        ]
+      }
+    },
+    {
+      "scam_type": "SIM_SWAP_ATTEMPT",
+      "category": "identity_theft",
+      "risk_level": "critical",
+      "confidence_weight": 0.95,
+      "description": "Attempts to port/swap victim's SIM card to gain access to OTPs and accounts",
+      "example_messages": [
+        "This is Airtel customer care. We are upgrading network to 5G in your area. Need to verify your SIM. Share OTP to continue using services",
+        "Jio important: Your SIM will be blocked due to Aadhaar verification pending. Share OTP we sent to update Aadhaar-SIM linking immediately",
+        "Vi customer service: Someone requested to block your SIM from another device. If not you, tell us the 4-digit code to cancel this request",
+        "URGENT: Duplicate SIM card application received for your number. To prevent fraud, verify by sharing 6-digit authentication code now",
+        "Your mobile number will be ported to Airtel automatically in 24 hours. To stop porting share OTP. Call customer care: 1800-547-8888",
+        "SIM card upgrade required for better network. We'll send technician tomorrow with new SIM. Share current SIM verification code for activation",
+        "Telecom department: Your number registered on 5 illegal apps. Number will be permanently blocked. Prevent by sharing TRAI verification OTP",
+        "Important: Your SIM will expire on 31 March 2024. Renew by completing e-KYC: sim-reactivate-india.com Upload Aadhaar + enter OTP to confirm",
+        "DoT notice: Your mobile number used in spam calls. Legal action pending. Clear your name by verification: share OTP received from 595959",
+        "Hello, bank security here. We detected SIM swap attempt on your number. Protect your account by confirming OTP we just sent you"
+      ],
+      "keywords": [
+        "SIM card", "SIM block", "SIM deactivate", "SIM swap", "SIM port",
+        "5G upgrade", "network upgrade", "SIM upgrade", "new SIM",
+        "aadhaar-SIM linking", "number portability", "mobile port",
+        "share OTP", "verify SIM", "SIM verification", "authentication code",
+        "airtel", "jio", "vi", "vodafone", "bsnl", "telecom",
+        "TRAI", "DoT", "telecom department", "telecom authority",
+        "SIM expire", "SIM renewal", "e-KYC", "KYC verification",
+        "duplicate SIM", "illegal app", "spam calls", "fraud prevention"
+      ],
+      "regex_patterns": [
+        "(?i)sim.*(block|deactivat|swap|port|upgrad|verif|renew|expire)",
+        "(?i)(5g|4g|network).*(upgrad|sim|verif)",
+        "(?i)(aadhaar|aadhar)[- ]?sim.*link",
+        "(?i)(share|tell|provide).*otp.*sim",
+        "(?i)(jio|airtel|vi|vodafone|bsnl).*(customer|care|service).*otp",
+        "(?i)(trai|dot|telecom).*(block|verif|legal)",
+        "(?i)duplicate\\s*sim.*application",
+        "(?i)(prevent|stop|cancel).*(port|fraud).*otp"
+      ],
+      "intent_signals": [
+        "SIM card related OTP request",
+        "network upgrade requiring verification",
+        "Aadhaar-SIM linking pressure",
+        "duplicate SIM fraud prevention tactic",
+        "number porting verification",
+        "SIM expiry/renewal urgency",
+        "telecom authority impersonation",
+        "fake fraud prevention requiring OTP"
+      ],
+      "psychological_triggers": [
+        "fear of losing phone/SIM services",
+        "urgency (SIM will be blocked)",
+        "authority (telecom company, TRAI)",
+        "compliance (network upgrade needed)",
+        "fraud prevention exploitation",
+        "legal threat (action pending)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "user-initiated SIM replacement at store",
+          "official telecom app notifications"
+        ],
+        "context_checks": [
+          "telcos never ask for OTP via call/message for SIM issues",
+          "SIM upgrades happen at physical stores",
+          "Aadhaar-SIM linking happens via official process, not OTP sharing",
+          "real network upgrades don't require verification",
+          "duplicate SIM requests require physical verification at store",
+          "any SIM-related OTP request via phone/message is suspicious"
+        ]
+      }
+    },
+    {
+      "scam_type": "DEEPFAKE_VOICE_SCAM",
+      "category": "ai_impersonation",
+      "risk_level": "critical",
+      "confidence_weight": 0.90,
+      "description": "AI-generated voice clones impersonating family, friends, or officials (2024-2026 emerging threat)",
+      "example_messages": [
+        "[Voice call] Hi Mom, it's me Rahul. I'm in serious trouble. Met with accident. Phone broken, calling from hospital. Need Rs.2 lakh urgently for surgery. Send to doctor's account I'll share via SMS [AI voice clone]",
+        "[Voice call] Sir, this is your manager Rajesh Kumar speaking. I need you to do urgent wire transfer of Rs.5 lakh to client account. I'm in meeting, can't access laptop. I'll send details on WhatsApp [Boss voice deepfake]",
+        "[Voice call] Papa, it's me. I'm kidnapped. Please don't call police. They want Rs.10 lakh ransom. I'll send bank details. Please save me papa [Real voice emotional context]",
+        "I just received voice message from CEO asking to transfer Rs.25 lakh to new vendor. Voice sounds exactly like him but email ID slightly different. Should I proceed?",
+        "[Voice call] This is Sub Inspector Sharma from Andheri police station. Your son arrested in drug case. You recognize my voice - we met last year at your colony event. Need Rs.3 lakh bail urgently [Trusted voice impersonation]",
+        "[Suspicious context] Friend called saying he's stuck abroad urgently needs Rs.50,000. Voice was identical but he was speaking very fast and call disconnected in 2 minutes. Sent bank details via message.",
+        "[Video call - poor quality] Hi Aunty, this is Priya. Network very poor here. Can you see me? I need urgent money Rs.1.5 lakh. Medical emergency. [Deepfake video + voice]",
+        "Received WhatsApp voice note from my daughter's number. Sounds 95% like her but something feels off. Says she's in trouble and needs money sent to someone immediately.",
+        "[Voice call] Hey dude, remember me? Your college friend Amit. I'm in Bangalore for work. Met with emergency. My wallet stolen. Can you send Rs.8,000? Will return next week. [Voice cloned from social media]",
+        "Got call from 'bank manager' who knew my name, account number and even spoke in familiar voice similar to my regular branch manager. Asked for OTP for 'account security upgrade'."
+      ],
+      "keywords": [
+        "voice call", "voice message", "voice note", "audio message", "audio call",
+        "sounds like", "voice similar", "recognize voice", "voice exactly like",
+        "poor network", "call dropped", "connection issue", "line breaking",
+        "video call", "can you see me", "video not clear", "screen frozen",
+        "AI voice", "deepfake", "voice clone", "synthetic voice",
+        "boss calling", "CEO calling", "manager urgent", "family member emergency",
+        "speaking fast", "urgent tone", "emotional", "crying", "distressed",
+        "verify caller", "voice verification", "sounds suspicious", "feels off"
+      ],
+      "regex_patterns": [
+        "(?i)(voice|audio).*(call|message|note|urgent|emergency)",
+        "(?i)(sound|voice).*(like|similar|exactly|recognize|familiar)",
+        "(?i)(poor|bad|weak).*(network|connection|quality|line)",
+        "(?i)(video\\s*call|video\\s*message).*(poor|blur|frozen|unclear)",
+        "(?i)(boss|ceo|manager|family).*(calling|voice|urgent|emergency)",
+        "(?i)(speaking\\s*fast|rushed|quick|hurry|urgent\\s*tone)",
+        "(?i)(deepfake|ai\\s*voice|voice\\s*clon|synthetic)",
+        "(?i)(verify|confirm|suspicious|feels\\s*off).*(call|voice|caller)"
+      ],
+      "intent_signals": [
+        "AI-generated voice impersonation",
+        "emotional context exploitation",
+        "poor call quality excuse (to hide imperfection)",
+        "urgency combined with familiar voice",
+        "verification bypass using voice trust",
+        "family/boss/friend impersonation",
+        "quick conversation with money demand",
+        "inability to verify through alternative channels",
+        "voice cloned from social media/public content"
+      ],
+      "psychological_triggers": [
+        "trust in familiar voices",
+        "emotional response to distress (family member)",
+        "authority compliance (boss, officer)",
+        "panic overriding verification instinct",
+        "friendship obligation",
+        "urgency combined with voice trust"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "verified video calls showing clear face and voice sync",
+          "in-person follow-up confirmed requests"
+        ],
+        "context_checks": [
+          "ALWAYS verify through alternative channel (new call to known number)",
+          "ask personal questions only real person would know",
+          "be suspicious of urgency + money request",
+          "poor call quality = red flag in important requests",
+          "verify boss/authority requests through official channels",
+          "family emergencies should be verified with other family members",
+          "social media voice samples can be used for deepfakes"
+        ]
+      }
+    },
+    {
+      "scam_type": "FAKE_KYC_LINK",
+      "category": "identity_theft",
+      "risk_level": "critical",
+      "confidence_weight": 0.93,
+      "description": "Phishing links mimicking KYC verification for banks, wallets, and services (2025-2026 rising threat)",
+      "example_messages": [
+        "HDFC Bank: Complete your pending e-KYC by 28 Feb 2026 or account will be frozen. Update now: hdfcbank-ekyc-update.online Upload Aadhaar + PAN + Selfie",
+        "Paytm KYC incomplete. Upload documents urgently: paytm-kyc-verify.co.in (Aadhaar front, Aadhaar back, PAN, Live photo, Bank passbook). Account limited till completion",
+        "PhonePe KYC verification pending since 90 days. Complete full KYC: phonepe-fullkyc.net Upload: Aadhaar, PAN, Selfie, Bank statement. Wallet transaction limit will increase to Rs.1 lakh",
+        "Aadhaar Update: Government mandatory Aadhaar re-verification for all mobile users. Update before 31 March: uidai-reverify-2026.org Submit OTP + Aadhaar PDF",
+        "SBI e-KYC: Your account marked for audit review. Submit KYC documents within 48 hours: onlinesbi-kyc-portal.in Enter: Customer ID, Account number, Debit card + CVV + Expiry + ATM PIN",
+        "Google Pay full KYC required for income tax compliance. Complete: googlepay-pan-kyc.com Upload IT return + Bank statement + Aadhaar masked copy",
+        "RBI mandate: All bank account holders must complete video KYC before April 2026. Book slot: rbi-video-kyc.online (Download app for video verification + document scan)",
+        "ICICI Bank important: Your account under temporary hold. Re-verify: icicibank-document-verification.co.in Enter: Debit card number, CVV, OTP, ATM PIN for authentication",
+        "Cryptocurrency KYC: Binance India compliance. All users must complete advance verification: binance-india-kyc.net Upload: Aadhaar, PAN, income proof, bank details, crypto wallet address",
+        "Jio KYC update mandatory. Your number will be blocked if not completed: jio-ekyc-aadhaar.online Enter: Aadhaar number, name, DOB, OTP verification, SIM card number"
+      ],
+      "keywords": [
+        "complete KYC", "pending KYC", "KYC verification", "e-KYC", "video KYC",
+        "upload documents", "submit documents", "upload Aadhaar", "upload PAN",
+        "account frozen", "account blocked", "account hold", "account audit",
+        "hdfc kyc", "sbi kyc", "paytm kyc", "phonepe kyc", "google pay kyc",
+        "aadhaar update", "aadhaar verification", "aadhaar mandatory",
+        "RBI mandate", "government mandatory", "compliance required",
+        "selfie", "live photo", "face scan", "biometric verification",
+        "debit card details", "CVV", "ATM PIN", "card expiry",
+        "bank statement", "income proof", "address proof", "IT return"
+      ],
+      "regex_patterns": [
+        "(?i)(complete|pending|update|verify|submit).*kyc",
+        "(?i)(e-?kyc|video\\s*kyc|full\\s*kyc|kyc\\s*verification)",
+        "(?i)(upload|submit|provide).*(aadhaar|aadhar|pan|document|selfie)",
+        "(?i)(account|wallet|number).*(frozen|block|hold|suspend|limit).*kyc",
+        "(?i)(hdfc|sbi|icici|axis|paytm|phonepe|google\\s*pay|jio|airtel)[a-z0-9-]*.*(kyc|verify|update)",
+        "(?i)(rbi|uidai|government|telecom).*(mandate|mandatory|compliance).*kyc",
+        "(?i)(debit\\s*card|cvv|atm\\s*pin|card\\s*detail).*verification",
+        "(?i)kyc.*(link|portal|website|online|app|download)"
+      ],
+      "intent_signals": [
+        "fake KYC verification portal",
+        "document upload demand (Aadhaar, PAN, selfie)",
+        "account blocking/freezing threat",
+        "impersonating banks/wallets/services",
+        "suspicious website domains",
+        "excessive information collection",
+        "urgent KYC completion deadline",
+        "requesting financial credentials (CVV, PIN)",
+        "video KYC app download"
+      ],
+      "psychological_triggers": [
+        "fear of account suspension",
+        "regulatory compliance pressure",
+        "urgency (deadline approaching)",
+        "authority (RBI, bank, government)",
+        "service interruption threat",
+        "normalcy bias (KYC is common process)"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "KYC requests from official bank/wallet apps",
+          "legitimate .gov.in domains for government KYC",
+          "in-app KYC flows (not external links)"
+        ],
+        "context_checks": [
+          "verify website domain carefully (typos, .co.in vs .com)",
+          "banks never ask for CVV, PIN, or full card details for KYC",
+          "legitimate KYC happens through official apps/branches",
+          "government KYC sites always end in .gov.in",
+          "never upload complete documents to untrusted sites",
+          "video KYC scheduled through official channels only",
+          "excessive information requests are red flags"
+        ]
+      }
+    },
+    {
+      "scam_type": "AUTOMATED_BOT_FRAUD",
+      "category": "automated_fraud",
+      "risk_level": "high",
+      "confidence_weight": 0.81,
+      "description": "Automated bots for mass SMS/WhatsApp/social media scam distribution (2024-2026 emerging)",
+      "example_messages": [
+        "[Bulk message pattern] Hello dear! You are selected for work from home opportunity. Earn Rs.25,000 monthly. Register: jobsindia2026.com Ref code: WFH45821 [Sent to thousands]",
+        "[Sequential spam] Message 1: Hi! Message 2: Interested in part-time job? Message 3: Data entry work Message 4: Earn Rs.500 daily Message 5: Join here: bit.ly/job9876 [Bot sequence]",
+        "[Generic template] CONGRATULATIONS! Your mobile number won Rs.50,000 in lucky draw organized by [COMPANY_NAME]. Claim at: [WINNER_LINK] Code: [RANDOM_NUMBER] [Variable insertion]",
+        "[Rapid response] Your reply detected in 0.3 seconds. Too fast for human. Bot sends: Great! Send Rs.1,000 registration fee to: [UPI_ID] immediately to confirm your slot!",
+        "[Copy-paste error] Hello [NAME], greetings from [COMPANY]! We have exciting opportunity for you [ERROR: Variable not loaded]. Visit: scam-site.com [Template glitch visible]",
+        "[Mass friend requests] 50+ friend requests in 1 hour from new profiles. All sending same message: Hi dear, I'm forex trader. I can teach you. Minimum investment Rs.10,000. 200% return guaranteed [Bot network]",
+        "[Identical messages] 10 different numbers sending exact same text: Your parcel stuck at post office. Pay Rs.150 redelivery charge: indiapost-track-2026.online Delivery ID: [RANDOM] [Coordinated bot attack]",
+        "[Auto-reply pattern] You: What is this about? Bot: Explained in website link dear You: How much? Bot: Full details in registration portal You: Who are you? Bot: Visit website for info [Pre-programmed responses]",
+        "[WhatsApp blast] Received message from unknown international number +234-XXX: Hello friend! Business proposal. Invest $500, earn $5,000. WhatsApp: +234-XXX-XXXX now! [Automated international scam]",
+        "[Suspicious timing] Received 5 messages at exactly 3:00 AM, 3:05 AM, 3:10 AM, 3:15 AM, 3:20 AM - all different scams but consistent 5-min intervals [Scheduled bot activity]"
+      ],
+      "keywords": [
+        "bulk message", "mass message", "blast message", "spam pattern",
+        "automated reply", "bot response", "instant reply", "rapid response",
+        "generic template", "copy paste", "variable error", "[NAME]", "[COMPANY]",
+        "sequential spam", "repeated message", "identical message",
+        "mass friend request", "bulk add", "network invitation spam",
+        "random code", "random ID", "auto generated", "system generated",
+        "scheduled message", "time pattern", "consistent interval",
+        "international number", "foreign number", "+234", "+44", "+1",
+        "pre-programmed", "scripted reply", "standard response"
+      ],
+      "regex_patterns": [
+        "(?i)(hello|hi|dear|friend).*(opportunity|job|investment|prize|winner)",
+        "(?i)\\[name\\]|\\[company\\]|\\[link\\]|\\[code\\]|\\[error\\]|\\[user\\]",
+        "(?i)(congratulation|selected|won).*(rs\\.?|₹)?\\s*\\d+.*(prize|reward|lucky)",
+        "(?i)(join|register|visit|click).*(here|now|link\\s*bit\\.ly)",
+        "(?i)(earn|make).*(rs\\.?|₹)?\\s*\\d+.*(daily|monthly|per\\s*day)",
+        "(?i)ref\\s*code|referral\\s*id|delivery\\s*id:\\s*[A-Z0-9]{6,}",
+        "(?i)whatsapp.*(\\+\\d{2,3}[-\\s]?\\d{3}[-\\s]?\\d{4,7})",
+        "(?i)(visit|check|click).*(website|portal|link|here).*details"
+      ],
+      "intent_signals": [
+        "mass distribution pattern",
+        "identical messages from multiple sources",
+        "template errors/variable placeholders visible",
+        "instant/unrealistic reply speed",
+        "generic content with random codes/IDs",
+        "time-based pattern (scheduled at specific intervals)",
+        "coordinated account activity",
+        "pre-scripted conversation flow",
+        "international number clusters",
+        "inability to answer specific questions"
+      ],
+      "psychological_triggers": [
+        "volume creates legitimacy illusion",
+        "urgency through repetition",
+        "generic trust building",
+        "overwhelming with messages",
+        "normalizing scam content through frequency"
+      ],
+      "false_positive_prevention": {
+        "whitelist_patterns": [
+          "legitimate bulk notifications (bank alerts, OTPs, order confirmations)",
+          "known promotional messages from verified businesses",
+          "automated customer service chatbots with clear identity"
+        ],
+        "context_checks": [
+          "check for template errors/placeholders",
+          "verify sender legitimacy through official channels",
+          "suspicious if multiple messages with same content/timing",
+          "real businesses have proper sender IDs",
+          "generic openers + money talk = red flag",
+          "instant replies to complex questions indicate bot",
+          "international numbers for India-specific offers are suspicious"
+        ]
+      }
+    }
+  ],
+  "detection_strategies": {
+    "multi_layer_analysis": {
+      "layer_1": "Keyword and regex pattern matching for immediate flagging",
+      "layer_2": "Intent and context analysis using AI semantic understanding",
+      "layer_3": "Risk scoring based on psychological triggers and behavioral patterns",
+      "layer_4": "Conversation flow analysis for evolving scam tactics",
+      "layer_5": "Entity extraction (phone, UPI, links) for intelligence gathering"
+    },
+    "confidence_scoring": {
+      "formula": "(keyword_match * 0.2) + (regex_pattern_match * 0.25) + (ai_intent_score * 0.35) + (psychological_trigger_score * 0.2)",
+      "thresholds": {
+        "critical": 0.85,
+        "high": 0.70,
+        "medium": 0.50,
+        "low": 0.30
+      }
+    },
+    "false_positive_mitigation": {
+      "contextual_analysis": "Check conversation history for established relationships",
+      "whitelist_verification": "Compare against known legitimate entity patterns",
+      "multi_signal_requirement": "Require multiple indicators before high-confidence flagging",
+      "user_behavior_baseline": "Learn normal user communication patterns",
+      "temporal_analysis": "Consider timing and sequence of messages"
+    }
+  },
+  "continuous_learning": {
+    "strategy_1_new_scam_detection": {
+      "description": "Automatically identify and learn from new scam patterns",
+      "approach": [
+        "Monitor flagged conversations for novel techniques not matching existing patterns",
+        "Cluster similar low-confidence detections to find emerging patterns",
+        "Extract common features from user-reported scams",
+        "Identify temporal spikes in specific message patterns",
+        "Cross-reference with global scam databases and threat intelligence feeds"
+      ],
+      "implementation": "Use unsupervised learning to detect anomalies in scam tactics, then have security analysts validate and add to library"
+    },
+    "strategy_2_adaptive_weights": {
+      "description": "Dynamically adjust confidence weights based on effectiveness",
+      "approach": [
+        "Track false positive and false negative rates per scam type",
+        "Adjust regex patterns threshold based on precision/recall metrics",
+        "Retrain AI model monthly with new validated samples",
+        "A/B test rule variations and keep best performers",
+        "Reduce weight of overmatching patterns, increase weight of precise ones"
+      ],
+      "implementation": "Feedback loop where security team marks true/false positives, system auto-adjusts weights to optimize F1 score"
+    },
+    "strategy_3_regional_adaptation": {
+      "description": "Learn region-specific and language-specific scam variations",
+      "approach": [
+        "Maintain separate pattern libraries for different regions (North India, South India, tier-1 cities, rural areas)",
+        "Track language-specific keywords (Hindi, Tamil, Telugu, Bengali romanized text)",
+        "Learn local brand names and regional financial products",
+        "Adapt to regional festivals and seasonal scams (Diwali, tax season)",
+        "Monitor regional news for context (local scams, regulatory changes)"
+      ],
+      "implementation": "Geo-tagging detection rules and maintaining regional variant databases with automatic pattern propagation"
+    },
+    "strategy_4_avoid_overblocking": {
+      "description": "Prevent blocking legitimate communications",
+      "approach": [
+        "Implement graduated response (flag, warn, block) based on confidence",
+        "Maintain user reputation scores (new users vs established)",
+        "Whitelist verified businesses and official entities",
+        "Allow user appeals and feedback for false positives",
+        "Context-aware detection (family conversations vs stranger interactions)",
+        "Time decay for indicators (urgent keywords less suspicious in established conversations)"
+      ],
+      "implementation": "Multi-tier alert system with human review for borderline cases, ML model trained on feedback to improve precision"
+    },
+    "strategy_5_threat_intelligence_integration": {
+      "description": "Integrate external threat feeds and reported scam data",
+      "approach": [
+        "Pull data from cybercrime portals (cybercrime.gov.in)",
+        "Integrate RBI, TRAI, and banking sector alerts",
+        "Monitor social media for trending scam reports",
+        "Collaborate with banks for real-time fraud phone/UPI numbers",
+        "Subscribe to global scam databases (FTC, Action Fraud, etc.)"
+      ],
+      "implementation": "Daily sync with external APIs, blacklist updates, pattern library enrichment from verified sources"
+    },
+    "strategy_6_adversarial_learning": {
+      "description": "Prepare for scammers adapting to detection",
+      "approach": [
+        "Simulate scam message variations (spelling changes, emoji insertions, space manipulation)",
+        "Train on obfuscation techniques (1 instead of I, @ instead of a)",
+        "Detect semantic intent even with different wording",
+        "Monitor for unusual character encodings and Unicode tricks",
+        "Red team exercises where security team creates new scam variants"
+      ],
+      "implementation": "Adversarial training where AI model is exposed to intentionally modified scam messages to generalization"
+    }
+  },
+  "deployment_recommendations": {
+    "real_time_processing": "Use edge computing for low-latency detection (<100ms response time)",
+    "scalability": "Containerized microservices architecture to handle millions of messages daily",
+    "privacy": "On-device pattern matching first, only send to cloud for AI analysis when confidence threshold met",
+    "audit_trail": "Log all detections with conversation context for regulatory compliance and forensics",
+    "user_transparency": "Provide explanations for why message was flagged (e.g., 'Contains urgency + payment request + unknown UPI ID')",
+    "integration_points": "SMS gateway, WhatsApp Business API, banking apps, payment wallets, telecom operators",
+    "human_in_loop": "Escalate 10-20% of borderline cases to human analysts for verification and learning",
+    "performance_monitoring": "Track precision, recall, F1 score, false positive rate, detection latency, user satisfaction"
+  }
+}

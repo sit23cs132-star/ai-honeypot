@@ -1,18 +1,35 @@
 """Scam detection module."""
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 from models.schemas import DetectionResult
 from utils.ai_client import AIClient
 from config import config
+
+# Import enhanced detector (optional - will use if available)
+try:
+    from agent.enhanced_detector import EnhancedScamDetector
+    ENHANCED_DETECTOR_AVAILABLE = True
+except ImportError:
+    ENHANCED_DETECTOR_AVAILABLE = False
 
 
 class ScamDetector:
     """Detects scam intent in messages using AI and pattern matching."""
     
-    def __init__(self):
+    def __init__(self, use_enhanced_detector: bool = True):
         self.ai_client = AIClient()
+        self.use_enhanced = use_enhanced_detector and ENHANCED_DETECTOR_AVAILABLE
         
-        # Common scam keywords and patterns
+        # Initialize enhanced detector if available
+        if self.use_enhanced:
+            try:
+                self.enhanced_detector = EnhancedScamDetector()
+                print(f"✓ Enhanced detector loaded: {self.enhanced_detector.get_statistics()}")
+            except Exception as e:
+                print(f"Warning: Could not initialize enhanced detector: {e}")
+                self.use_enhanced = False
+        
+        # Common scam keywords and patterns (legacy - kept for fallback)
         self.scam_keywords = [
             r'\b(urgent|immediately|act now|limited time|expire|hurry|don\'?t miss|hurry up)\b',
             r'\b(won|winner|prize|lottery|reward|gift|claim|congratulations)\b',
@@ -31,22 +48,103 @@ class ScamDetector:
         
         # URL patterns
         self.url_pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-    
+        
     async def detect_scam(
         self,
         message: str,
-        conversation_history: List[Dict]
+        conversation_history: List[Dict],
+        sender_info: Optional[Dict] = None
     ) -> DetectionResult:
         """
-        Detect if a message is a scam attempt.
+        Detect if a message is a scam attempt using hybrid detection.
         
         Args:
             message: The message to analyze
             conversation_history: Previous messages in the conversation
+            sender_info: Optional sender metadata (phone, email, etc.)
             
         Returns:
             DetectionResult with detection outcome
         """
+        # If enhanced detector is available, use hybrid approach
+        if self.use_enhanced:
+            return await self._hybrid_detection(message, conversation_history, sender_info)
+        
+        # Fallback to legacy detection
+        return await self._legacy_detection(message, conversation_history)
+    
+    async def _hybrid_detection(
+        self,
+        message: str,
+        conversation_history: List[Dict],
+        sender_info: Optional[Dict] = None
+    ) -> DetectionResult:
+        """
+        Hybrid detection combining enhanced pattern matching and AI.
+        
+        This provides the best of both worlds:
+        - Fast pattern matching for known scam types
+        - AI analysis for sophisticated/novel scams
+        - Confidence score combining both methods
+        """
+        # 1. Enhanced pattern-based detection
+        enhanced_result = self.enhanced_detector.detect_scam(
+            message,
+            conversation_history,
+            sender_info
+        )
+        
+        # 2. AI-based detection for sophisticated analysis
+        ai_result = await self._ai_detection(message, conversation_history)
+        ai_is_scam = ai_result.get("is_scam", False)
+        ai_confidence = ai_result.get("confidence", 0.0)
+        
+        # 3. Combine results intelligently
+        # If both agree on scam, take the higher confidence
+        if enhanced_result.is_scam and ai_is_scam:
+            final_confidence = max(enhanced_result.confidence, ai_confidence)
+            is_scam = True
+        
+        # If one detects scam with high confidence, trust it
+        elif enhanced_result.confidence >= 0.75:
+            final_confidence = enhanced_result.confidence
+            is_scam = True
+        elif ai_confidence >= 0.75:
+            final_confidence = ai_confidence
+            is_scam = True
+        
+        # If both detect scam but with lower confidence, average them
+        elif enhanced_result.is_scam or ai_is_scam:
+            final_confidence = (enhanced_result.confidence + ai_confidence) / 2
+            is_scam = final_confidence >= 0.50
+        
+        # If neither detects scam, not a scam
+        else:
+            final_confidence = min(enhanced_result.confidence, ai_confidence)
+            is_scam = False
+        
+        # Combine indicators from both methods
+        combined_indicators = list(set(
+            enhanced_result.indicators +
+            ai_result.get("indicators", [])
+        ))
+        
+        # Prefer enhanced detector's scam type, fallback to AI
+        scam_type = enhanced_result.scam_type or ai_result.get("scam_type")
+        
+        return DetectionResult(
+            is_scam=is_scam,
+            confidence=round(final_confidence, 3),
+            indicators=combined_indicators,
+            scam_type=scam_type
+        )
+    
+    async def _legacy_detection(
+        self,
+        message: str,
+        conversation_history: List[Dict]
+    ) -> DetectionResult:
+        """Legacy detection method (original implementation)."""
         # Quick pattern-based detection
         pattern_score, pattern_indicators = self._pattern_detection(message)
         
