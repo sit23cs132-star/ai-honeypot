@@ -66,12 +66,59 @@ class ScamDetector:
         Returns:
             DetectionResult with detection outcome
         """
+        # Fast-path detection for obvious scams (banking/OTP)
+        fast_result = self._fast_path_detection(message)
+        if fast_result:
+            return fast_result
+        
         # If enhanced detector is available, use hybrid approach
         if self.use_enhanced:
             return await self._hybrid_detection(message, conversation_history, sender_info)
         
         # Fallback to legacy detection
         return await self._legacy_detection(message, conversation_history)
+    
+    def _fast_path_detection(self, message: str) -> Optional[DetectionResult]:
+        """
+        Fast-path detection for obvious scams (banking, OTP, urgent account issues).
+        Returns DetectionResult immediately for clear scams, None otherwise.
+        """
+        message_lower = message.lower()
+        
+        # Banking + OTP = Obvious phishing scam
+        has_banking = any(word in message_lower for word in [
+            'bank', 'account', 'sbi', 'hdfc', 'icici', 'axis', 
+            'debit card', 'credit card', 'atm'
+        ])
+        has_otp = any(word in message_lower for word in [
+            'otp', 'one time password', 'one-time password', 'verification code',
+            'security code', 'pin', 'cvv'
+        ])
+        has_urgency = any(word in message_lower for word in [
+            'urgent', 'immediately', 'blocked', 'suspended', 'locked',
+            'compromised', 'expire', 'within', 'hours', 'minutes'
+        ])
+        
+        # Banking phishing: bank + (OTP or urgency + account details)
+        if has_banking and (has_otp or (has_urgency and 'account' in message_lower)):
+            return DetectionResult(
+                is_scam=True,
+                confidence=0.95,
+                indicators=['banking_keywords', 'otp_request', 'urgency', 'account_verification'],
+                scam_type='banking_phishing'
+            )
+        
+        # Another common pattern: Share/send + account number/OTP
+        if ('share' in message_lower or 'send' in message_lower or 'provide' in message_lower):
+            if (has_otp or 'account number' in message_lower or 'card number' in message_lower):
+                return DetectionResult(
+                    is_scam=True,
+                    confidence=0.92,
+                    indicators=['credential_request', 'otp_phishing', 'urgent_action'],
+                    scam_type='phishing'
+                )
+        
+        return None
     
     async def _hybrid_detection(
         self,

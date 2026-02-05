@@ -126,41 +126,79 @@ Generate a natural response that maintains your persona and follows the current 
         Returns:
             Neutral response string
         """
-        neutral_responses = [
-            "Hello! How can I help you?",
-            "Hi there! What's this about?",
-            "Hello! I'm here. What do you need?",
-            "Hi! Yes, I'm available. What's going on?",
-            "Hello! What can I do for you?",
-            "Hi! I just saw your message. What's up?"
-        ]
-        
-        # For simple greetings, use a template
         message_lower = message.lower()
-        if any(word in message_lower for word in ['hi', 'hello', 'hey', 'greetings']):
-            return random.choice(neutral_responses)
         
-        # Otherwise, generate contextual response
+        # Context-aware responses based on message content
+        # Banking/Account related
+        if any(word in message_lower for word in ['bank', 'account', 'blocked', 'suspended', 'locked']):
+            responses = [
+                "Oh no! Which bank is this? What happened to my account?",
+                "Wait, what? My account is having issues? Which one?",
+                "This is serious! What do I need to do? Which bank are you from?",
+                "I'm worried now. Can you tell me more about this?"
+            ]
+            return random.choice(responses)
+        
+        # OTP/Verification related
+        if any(word in message_lower for word in ['otp', 'verify', 'code', 'verification']):
+            responses = [
+                "OTP? I just received something. What is this for?",
+                "Wait, what verification? Can you explain what's happening?",
+                "I'm not sure I understand. What do I need to verify?",
+                "I got some code on my phone. Is that what you mean?"
+            ]
+            return random.choice(responses)
+        
+        # Urgent/Time pressure
+        if any(word in message_lower for word in ['urgent', 'immediately', 'now', 'hurry', 'minutes', 'hours']):
+            responses = [
+                "Oh gosh, this sounds urgent! What do I need to do?",
+                "Okay, I'm here now. What's the emergency?",
+                "This sounds serious. Tell me what I should do right away.",
+                "I'm paying attention! What are the steps I need to follow?"
+            ]
+            return random.choice(responses)
+        
+        # Prize/Money/Investment
+        if any(word in message_lower for word in ['won', 'prize', 'money', 'earn', 'profit', 'investment']):
+            responses = [
+                "Really? That sounds interesting! How does this work?",
+                "Wow! Can you tell me more about this?",
+                "This sounds great! What do I need to do to get started?",
+                "I could use some extra money. What's involved?"
+            ]
+            return random.choice(responses)
+        
+        # For simple greetings
+        if any(word in message_lower for word in ['hi', 'hello', 'hey', 'greetings']) and len(message) < 20:
+            return random.choice([
+                "Hello! How can I help you?",
+                "Hi there! What's this about?",
+                "Hello! Yes, I'm here. What's going on?"
+            ])
+        
+        # Otherwise, generate contextual response with AI
         messages = [
             {
                 "role": "system",
-                "content": "You are a helpful person responding to a message. Be polite and neutral. Keep it brief (1-2 sentences)."
+                "content": "You are a concerned person responding to a message. Show interest and ask a clarifying question. Be helpful and engaged. Keep it brief (1-2 sentences)."
             },
             {
                 "role": "user",
-                "content": f"Respond to this message naturally: {message}"
+                "content": f"Respond naturally to this message: {message}"
             }
         ]
         
         try:
             response = await self.ai_client.generate_completion(
                 messages=messages,
-                temperature=0.7,
+                temperature=0.8,
                 max_tokens=100
             )
             return response.strip()
         except:
-            return random.choice(neutral_responses)
+            # Better fallback that shows engagement
+            return "I'm here! Can you explain what this is about? What do you need from me?"
     
     def _select_persona(self, scam_type: Optional[str], turn_count: int) -> str:
         """Select appropriate persona based on scam type."""
@@ -215,18 +253,31 @@ Generate a natural response that maintains your persona and follows the current 
     
     def _get_fallback_response(self, turn_count: int) -> str:
         """Get a fallback response if AI generation fails."""
-        responses = [
-            "I'm interested, but can you explain more about how this works?",
-            "That sounds good! What do I need to do exactly?",
-            "I want to help, but I'm not sure I understand. Can you clarify?",
-            "Okay, I'm listening. What's the next step?",
-            "I'm a bit confused. Can you walk me through this step by step?",
-            "Which bank account should I use for this?",
-            "What website do I need to go to?",
-            "How much time do I have to do this?",
-            "Is there a specific link you can send me?",
-            "What information do you need from me?"
-        ]
+        # Early turns - show interest and confusion
+        if turn_count <= 2:
+            responses = [
+                "Oh my! This sounds serious. What bank is this regarding?",
+                "Wait, I need to understand this better. Can you explain what's happening?",
+                "I'm concerned now. What exactly do I need to do?"
+            ]
+        # Middle turns - ask for specifics
+        elif turn_count <= 5:
+            responses = [
+                "Okay, I want to help. Which account number do you need? The one ending in what?",
+                "I'm ready to fix this. What information exactly do you need from me?",
+                "Should I check my bank app? Which bank are we talking about?",
+                "The OTP I received - is that what you need? What number?",
+                "Tell me step by step what I should do. I don't want to make a mistake."
+            ]
+        # Later turns - show urgency and willingness
+        else:
+            responses = [
+                "I don't want my account blocked! Where do I send the details?",
+                "I have the OTP here. Should I share it now? What's your number?",
+                "How much time do I have left? I'm ready to do this now.",
+                "Which website should I use? Can you send me the link?",
+                "What's your UPI ID? I can send the payment right away.",
+                "Should I go to the bank? Or can we fix this now?"
+            ]
         
-        # Choose based on turn count for variety
-        return responses[turn_count % len(responses)]
+        return random.choice(responses)
