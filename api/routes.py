@@ -1,7 +1,8 @@
 """API routes for the honey-pot system."""
-from fastapi import APIRouter, Header, HTTPException, Depends
+from fastapi import APIRouter, Header, HTTPException, Depends, Request
 from typing import Optional
 import time
+import json
 
 from models.schemas import AnalyzeRequest, AnalyzeResponse
 from agent.detector import ScamDetector
@@ -32,7 +33,7 @@ async def verify_api_key(x_api_key: Optional[str] = Header(None)):
 
 @router.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze_message(
-    request: Optional[AnalyzeRequest] = None,
+    raw_request: Request,
     api_key: str = Depends(verify_api_key)
 ):
     """
@@ -47,8 +48,21 @@ async def analyze_message(
     start_time = time.time()
     
     try:
-        # Handle missing request body (for basic endpoint testers)
-        if request is None:
+        # Parse request body - handle any content type or missing body
+        request_data = None
+        try:
+            body = await raw_request.body()
+            if body:
+                body_str = body.decode('utf-8')
+                if body_str.strip():  # Only parse non-empty bodies
+                    request_data = json.loads(body_str)
+        except:
+            pass  # Ignore parsing errors, use defaults
+        
+        # Create AnalyzeRequest with defaults if needed
+        if request_data:
+            request = AnalyzeRequest(**request_data)
+        else:
             request = AnalyzeRequest(
                 conversation_id="test",
                 message="test message"
