@@ -23,7 +23,7 @@ class ScamDetector:
             r'\b(investment|profit|returns|earn|income|opportunity)\b',
             r'\b(cryptocurrency|bitcoin|trading|forex|stocks)\b',
             r'\b(loan|debt|credit score|financial help)\b',
-            r'\b(romance|love|relationship|meet|lonely)\b',
+            r'\b(romance scam|dating scam|love scam|lonely|soulmate)\b',
             r'\b(government|irs|tax authority|police|legal action)\b',
             r'\b(tech support|virus|infected|hacked|security)\b',
         ]
@@ -52,14 +52,23 @@ class ScamDetector:
         # AI-based detection for more sophisticated analysis
         ai_result = await self._ai_detection(message, conversation_history)
         
-        # Combine results - lowered threshold for better detection
-        is_scam = ai_result.get("is_scam", False) or pattern_score > 0.3
-        confidence = max(pattern_score, ai_result.get("confidence", 0.0))
+        # Prioritize AI analysis over pattern matching
+        ai_is_scam = ai_result.get("is_scam", False)
+        ai_confidence = ai_result.get("confidence", 0.0)
         
-        # If pattern score is high, force scam detection
-        if pattern_score >= 0.5:
+        # Trust AI first - only use patterns if AI agrees or patterns are very strong
+        if ai_is_scam:
+            # AI detected scam - trust it
             is_scam = True
-            confidence = max(confidence, 0.8)
+            confidence = max(ai_confidence, pattern_score)
+        elif pattern_score >= 0.6:
+            # Very high pattern score (multiple indicators) - likely scam even without AI
+            is_scam = True
+            confidence = pattern_score
+        else:
+            # AI says not scam and pattern score is low - trust AI
+            is_scam = False
+            confidence = ai_confidence
         
         indicators = list(set(pattern_indicators + ai_result.get("indicators", [])))
         scam_type = ai_result.get("scam_type")
@@ -82,10 +91,10 @@ class ScamDetector:
         indicators = []
         score = 0.0
         
-        # Check for scam keywords
+        # Check for scam keywords - reduced from 0.2 to 0.15
         for pattern in self.scam_keywords:
             if re.search(pattern, message_lower):
-                score += 0.2
+                score += 0.15
                 indicators.append(pattern.replace(r'\b', '').replace('(', '').replace(')', ''))
         
         # Check for URLs
