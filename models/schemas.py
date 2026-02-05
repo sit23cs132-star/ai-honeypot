@@ -11,8 +11,8 @@ class ConversationMessage(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     """Request model for message analysis."""
-    conversation_id: str = Field(..., description="Unique identifier for the conversation")
-    message: str = Field(..., description="The incoming message to analyze")
+    conversation_id: str = Field(default="test", description="Unique identifier for the conversation")
+    message: str = Field(default="test message", description="The incoming message to analyze")
     conversation_history: Optional[List[ConversationMessage]] = Field(
         default=[],
         description="Previous messages in the conversation"
