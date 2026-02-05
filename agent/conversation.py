@@ -109,9 +109,11 @@ Generate a natural response that maintains your persona and follows the current 
             }
             
         except Exception as e:
-            # Fallback response
+            # Log the error for debugging
+            print(f"⚠️  AI generation failed (turn {turn_count}): {str(e)[:100]}")
+            # Fallback response with variety based on message content
             return {
-                "response": self._get_fallback_response(turn_count),
+                "response": self._get_contextual_fallback(message, turn_count, scam_type),
                 "next_strategy": next_strategy,
                 "persona": persona
             }
@@ -196,9 +198,18 @@ Generate a natural response that maintains your persona and follows the current 
                 max_tokens=100
             )
             return response.strip()
-        except:
-            # Better fallback that shows engagement
-            return "I'm here! Can you explain what this is about? What do you need from me?"
+        except Exception as e:
+            print(f"⚠️  Neutral response AI failed: {str(e)[:100]}")
+            # Vary the fallback based on hash of message
+            seed = hash(message) % 5
+            fallbacks = [
+                "I'm here! What's going on? Can you explain?",
+                "Yes, I saw your message. What do you need from me?",  
+                "I'm available now. Tell me what this is about?",
+                "Hello! I'm paying attention. What happened?",
+                "I'm listening. Can you give me more details?"
+            ]
+            return fallbacks[seed]
     
     def _select_persona(self, scam_type: Optional[str], turn_count: int) -> str:
         """Select appropriate persona based on scam type."""
@@ -251,33 +262,93 @@ Generate a natural response that maintains your persona and follows the current 
             formatted.append(f"{role}: {content}")
         return "\n".join(formatted)
     
-    def _get_fallback_response(self, turn_count: int) -> str:
-        """Get a fallback response if AI generation fails."""
-        # Early turns - show interest and confusion
-        if turn_count <= 2:
-            responses = [
-                "Oh my! This sounds serious. What bank is this regarding?",
-                "Wait, I need to understand this better. Can you explain what's happening?",
-                "I'm concerned now. What exactly do I need to do?"
-            ]
-        # Middle turns - ask for specifics
-        elif turn_count <= 5:
-            responses = [
-                "Okay, I want to help. Which account number do you need? The one ending in what?",
-                "I'm ready to fix this. What information exactly do you need from me?",
-                "Should I check my bank app? Which bank are we talking about?",
-                "The OTP I received - is that what you need? What number?",
-                "Tell me step by step what I should do. I don't want to make a mistake."
-            ]
-        # Later turns - show urgency and willingness
+    def _get_contextual_fallback(self, message: str, turn_count: int, scam_type: Optional[str]) -> str:
+        """Get a contextual fallback response based on message content and turn."""
+        message_lower = message.lower()
+        
+        # Hash message and turn to get consistent but varied responses
+        seed = hash(message + str(turn_count)) % 100
+        
+        # Check message keywords for context
+        has_otp = 'otp' in message_lower or 'code' in message_lower
+        has_account = 'account' in message_lower or 'bank' in message_lower
+        has_urgent = 'urgent' in message_lower or 'immediately' in message_lower or 'minutes' in message_lower
+        has_upi = 'upi' in message_lower
+        
+        responses = []
+        
+        # Early turns (1-3) - confusion and questions
+        if turn_count <= 3:
+            if has_otp:
+                responses = [
+                    "Oh! I got an OTP just now. Is that what you mean? Which digits exactly?",
+                    "Wait, I received a code on my phone. That's the OTP? All of it?",
+                    "I see a 6-digit code here. Should I tell you this?"
+                ]
+            elif has_account:
+                responses = [
+                    "My account? Which one - SBI or HDFC? I have both.",
+                    "Oh no! What's wrong with my account? Which bank?",
+                    "Wait, which account number - savings or current?"
+                ]
+            elif has_urgent:
+                responses = [
+                    "Oh my god, this is urgent? What should I do first?",
+                    "I'm worried now! Tell me quickly what to do!",
+                    "Okay okay, I'm here! What details do you need?"
+                ]
+            else:
+                responses = [
+                    "I'm listening. Can you explain what happened?",
+                    "Wait, I don't understand. What is this about?",
+                    "Can you tell me more? I want to help."
+                ]
+        
+        # Middle turns (4-7) - showing willingness
+        elif turn_count <= 7:
+            if has_upi:
+                responses = [
+                    "UPI ID? Mine is something like myname@paytm I think. Is that right?",
+                    "I use PhonePe. What UPI details do you need exactly?",
+                    "Should I give you my UPI ID? What's yours so I can send?"
+                ]
+            elif has_otp:
+                responses = [
+                    "The OTP is 6 digits. Should I read all of them?",
+                    "It says 'OTP: XXXXXX valid for 10 minutes' - that one?",
+                    "I'm ready to share the code. Where should I send it?"
+                ]
+            elif has_account:
+                responses = [
+                    "My account number... it starts with 4571. Is that the right one?",
+                    "Should I get my passbook? The number is written there.",
+                    "I think it's a 16-digit number. Which format do you need?"
+                ]
+            else:
+                responses = [
+                    "I'm ready to do whatever you need. Just guide me.",
+                    "Tell me the exact steps. I don't want to mess this up.",
+                    "What information do you need first?"
+                ]
+        
+        # Later turns (8+) - urgency and compliance
         else:
             responses = [
-                "I don't want my account blocked! Where do I send the details?",
-                "I have the OTP here. Should I share it now? What's your number?",
-                "How much time do I have left? I'm ready to do this now.",
-                "Which website should I use? Can you send me the link?",
-                "What's your UPI ID? I can send the payment right away.",
-                "Should I go to the bank? Or can we fix this now?"
+                "I don't have much time! Just tell me - what exact details?",
+                "Please help me fix this quickly! What do I send where?",
+                "I'm getting more SMS codes. Should I forward them all to you?",
+                "Can we do this on WhatsApp? What's your number?",
+                "My friend said I should verify with bank first, but you ARE the bank right?",
+                "How much more information do you need? I want to close this today."
             ]
         
-        return random.choice(responses)
+        # Choose response based on seed for variety
+        if responses:
+            return responses[seed % len(responses)]
+        
+        # Ultimate fallback
+        return "Tell me what you need. I'm ready to help."
+    
+    def _get_fallback_response(self, turn_count: int) -> str:
+        """Legacy fallback - kept for compatibility."""
+        return self._get_contextual_fallback("", turn_count, None)
