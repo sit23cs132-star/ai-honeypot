@@ -1,0 +1,165 @@
+"""Scam detection module."""
+import re
+from typing import List, Dict
+from models.schemas import DetectionResult
+from utils.ai_client import AIClient
+from config import config
+
+
+class ScamDetector:
+    """Detects scam intent in messages using AI and pattern matching."""
+    
+    def __init__(self):
+        self.ai_client = AIClient()
+        
+        # Common scam keywords and patterns
+        self.scam_keywords = [
+            r'\b(urgent|immediately|act now|limited time|expire|hurry)\b',
+            r'\b(won|winner|prize|lottery|reward|gift|claim)\b',
+            r'\b(bank|account|credit card|debit card|cvv|pin|password|otp)\b',
+            r'\b(verify|confirm|update|suspend|locked|blocked|compromised)\b',
+            r'\b(refund|tax|customs|clearance|fee|payment|transfer)\b',
+            r'\b(click here|link|website|download|install|app)\b',
+            r'\b(investment|profit|returns|earn|income|opportunity)\b',
+            r'\b(cryptocurrency|bitcoin|trading|forex|stocks)\b',
+            r'\b(loan|debt|credit score|financial help)\b',
+            r'\b(romance|love|relationship|meet|lonely)\b',
+            r'\b(government|irs|tax authority|police|legal action)\b',
+            r'\b(tech support|virus|infected|hacked|security)\b',
+        ]
+        
+        # URL patterns
+        self.url_pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    
+    async def detect_scam(
+        self,
+        message: str,
+        conversation_history: List[Dict]
+    ) -> DetectionResult:
+        """
+        Detect if a message is a scam attempt.
+        
+        Args:
+            message: The message to analyze
+            conversation_history: Previous messages in the conversation
+            
+        Returns:
+            DetectionResult with detection outcome
+        """
+        # Quick pattern-based detection
+        pattern_score, pattern_indicators = self._pattern_detection(message)
+        
+        # AI-based detection for more sophisticated analysis
+        ai_result = await self._ai_detection(message, conversation_history)
+        
+        # Combine results - lowered threshold for better detection
+        is_scam = ai_result.get("is_scam", False) or pattern_score > 0.3
+        confidence = max(pattern_score, ai_result.get("confidence", 0.0))
+        
+        # If pattern score is high, force scam detection
+        if pattern_score >= 0.5:
+            is_scam = True
+            confidence = max(confidence, 0.8)
+        
+        indicators = list(set(pattern_indicators + ai_result.get("indicators", [])))
+        scam_type = ai_result.get("scam_type")
+        
+        return DetectionResult(
+            is_scam=is_scam,
+            confidence=confidence,
+            indicators=indicators,
+            scam_type=scam_type
+        )
+    
+    def _pattern_detection(self, message: str) -> tuple[float, List[str]]:
+        """
+        Pattern-based scam detection using keywords and heuristics.
+        
+        Returns:
+            Tuple of (confidence_score, indicators_list)
+        """
+        message_lower = message.lower()
+        indicators = []
+        score = 0.0
+        
+        # Check for scam keywords
+        for pattern in self.scam_keywords:
+            if re.search(pattern, message_lower):
+                score += 0.2
+                indicators.append(pattern.replace(r'\b', '').replace('(', '').replace(')', ''))
+        
+        # Check for URLs
+        if self.url_pattern.search(message):
+            score += 0.2
+            indicators.append("contains_url")
+        
+        # Check for phone numbers
+        phone_pattern = r'\b\d{10,15}\b|\b\+\d{1,3}[\s-]?\d{10,15}\b'
+        if re.search(phone_pattern, message):
+            score += 0.1
+            indicators.append("contains_phone")
+        
+        # Check for urgency indicators
+        urgency_words = ['urgent', 'immediately', 'now', 'hurry', 'asap', 'expire', 'deadline', 'limited time', 'act now']
+        if any(word in message_lower for word in urgency_words):
+            score += 0.3
+            indicators.append("urgency_tactic")
+        
+        # Check for money-related terms
+        money_words = ['money', 'payment', 'transfer', 'send', 'pay', 'bank', 'account', 'upi', 'paytm', 'prize', 'won', 'claim']
+        if any(word in message_lower for word in money_words):
+            score += 0.25
+            indicators.append("money_request")
+        
+        # Cap score at 1.0
+        score = min(score, 1.0)
+        
+        return score, indicators
+    
+    async def _ai_detection(
+        self,
+        message: str,
+        conversation_history: List[Dict]
+    ) -> Dict:
+        """
+        AI-based scam detection using language model.
+        
+        Returns:
+            Dictionary with detection results
+        """
+        # Build conversation context
+        history_text = ""
+        for msg in conversation_history[-5:]:  # Last 5 messages for context
+            role = msg.get("role", "unknown")
+            content = msg.get("message", "")
+            history_text += f"{role}: {content}\n"
+        
+        # Prepare prompt
+        messages = [
+            {
+                "role": "system",
+                "content": config.DETECTION_PROMPT
+            },
+            {
+                "role": "user",
+                "content": f"""Conversation History:
+{history_text}
+
+Latest Message to Analyze:
+{message}
+
+Analyze this message and respond with JSON."""
+            }
+        ]
+        
+        try:
+            result = await self.ai_client.generate_json_completion(messages)
+            return result
+        except Exception as e:
+            # Fallback to safe defaults
+            return {
+                "is_scam": False,
+                "confidence": 0.0,
+                "indicators": [],
+                "scam_type": None
+            }

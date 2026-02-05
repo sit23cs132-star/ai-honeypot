@@ -1,0 +1,251 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Agentic Honey-Pot API",
+    "description": "AI-powered scam detection and intelligence extraction system",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local development server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/api/analyze": {
+      "post": {
+        "summary": "Analyze incoming message for scam detection",
+        "description": "Analyzes a message for scam intent, engages the scammer if detected, and extracts intelligence",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeRequest"
+              },
+              "example": {
+                "conversation_id": "conv_12345",
+                "message": "Congratulations! You've won $10,000. Click here to claim.",
+                "conversation_history": [
+                  {
+                    "role": "scammer",
+                    "message": "Hello, I have great news for you!"
+                  },
+                  {
+                    "role": "agent",
+                    "message": "Oh really? What is it?"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API key missing"
+          },
+          "403": {
+            "description": "Forbidden - Invalid API key"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "description": "Check if the API is running",
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "ai_provider": {
+                      "type": "string",
+                      "example": "openai"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "AnalyzeRequest": {
+        "type": "object",
+        "required": ["conversation_id", "message"],
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "description": "Unique identifier for the conversation"
+          },
+          "message": {
+            "type": "string",
+            "description": "The incoming message to analyze"
+          },
+          "conversation_history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationMessage"
+            },
+            "description": "Previous messages in the conversation"
+          }
+        }
+      },
+      "ConversationMessage": {
+        "type": "object",
+        "required": ["role", "message"],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["scammer", "agent"],
+            "description": "Role of the message sender"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message content"
+          }
+        }
+      },
+      "AnalyzeResponse": {
+        "type": "object",
+        "properties": {
+          "conversation_id": {
+            "type": "string"
+          },
+          "scam_detected": {
+            "type": "boolean"
+          },
+          "confidence_score": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "response": {
+            "type": "string"
+          },
+          "engagement_active": {
+            "type": "boolean"
+          },
+          "turn_count": {
+            "type": "integer"
+          },
+          "extracted_intelligence": {
+            "$ref": "#/components/schemas/ExtractedIntelligence"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ResponseMetadata"
+          }
+        }
+      },
+      "ExtractedIntelligence": {
+        "type": "object",
+        "properties": {
+          "bank_accounts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "upi_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phishing_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phone_numbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_addresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scam_indicators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scam_type": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResponseMetadata": {
+        "type": "object",
+        "properties": {
+          "engagement_duration_seconds": {
+            "type": "number",
+            "format": "float"
+          },
+          "detection_method": {
+            "type": "string"
+          },
+          "agent_strategy": {
+            "type": "string"
+          },
+          "model_used": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
