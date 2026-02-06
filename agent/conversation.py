@@ -208,7 +208,8 @@ Generate a natural response that maintains your persona and follows the current 
             message_lower = message.lower()
             
             # Priority 1: OTP/Code mentions (most common scam element)
-            if any(word in message_lower for word in ['otp', 'code', 'verification code', 'pin code']):
+            # Check for OTP first, even if other keywords present
+            if 'otp' in message_lower or 'verification code' in message_lower or 'pin code' in message_lower or ('digit' in message_lower and 'code' in message_lower):
                 responses = [
                     "Wait, I received a code on my phone. That's the OTP? All of it?",
                     "Oh! I got an OTP just now. Is that what you mean? Which digits exactly?",
@@ -346,12 +347,12 @@ Generate a natural response that maintains your persona and follows the current 
         # Hash message and turn to get consistent but varied responses
         seed = hash(message + str(turn_count)) % 100
         
-        # Check message keywords for context (comprehensive)
-        has_otp = any(word in message_lower for word in ['otp', 'code', 'verification'])
-        has_account = any(word in message_lower for word in ['account', 'bank'])
-        has_transfer = any(word in message_lower for word in ['transfer', 'transaction'])
+        # Check message keywords for context (comprehensive and explicit)
+        has_otp = 'otp' in message_lower or ('digit' in message_lower and ('code' in message_lower or 'pin' in message_lower))
+        has_account = 'account' in message_lower or 'bank' in message_lower
+        has_transfer = 'transfer' in message_lower or 'transaction' in message_lower
         has_urgent = any(word in message_lower for word in ['urgent', 'immediately', 'minutes', 'now', 'quickly'])
-        has_upi = any(word in message_lower for word in ['upi', 'pin', 'cvv'])
+        has_upi = 'upi pin' in message_lower or 'upi' in message_lower or 'pin' in message_lower or 'cvv' in message_lower
         has_email = 'email' in message_lower or '@' in message_lower
         
         responses = []
